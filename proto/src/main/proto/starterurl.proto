@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package com.realestate.crawler.proto;
+
+import "response.proto";
+
+option java_multiple_files = true;
+option java_package = "com.realestate.crawler.proto";
+
+service StarterUrlCommandController {
+  rpc Create(CreateStaterUrl) returns (Response);
+  rpc UpdateHtmlContent(UpdateHtmlContentStarterUrl) returns(Response);
+}
+
+service StarterUrlQueryController {
+  rpc Get(GetStaterUrl) returns (StarterUrlResponse);
+  rpc GetList(GetStaterUrls) returns (StarterUrlListResponse);
+}
+
+message CreateStaterUrl {
+  int64 dataSourceId = 1;
+  repeated Url urls = 2;
+}
+
+message UpdateHtmlContentStarterUrl {
+  int64 id = 1;
+  string htmlContent = 2;
+}
+
+message GetStaterUrl {
+  int64 id = 1;
+}
+
+message Url {
+  string urlString = 1;
+}
+
+message GetStaterUrls {
+
+}
+
+message StarterUrlResponse {
+  Starterurl starterUrl = 1;
+}
+
+message StarterUrlListResponse {
+  repeated Starterurl starterUrl = 1;
+}
+
+message Starterurl {
+  int64 id = 1;
+  string url = 2;
+  string checkSumUrl = 3;
+  string htmlContent = 4;
+  string checkSumHtmlContent = 5;
+  int32 status = 6;
+  int64 dataSourceId = 7;
+}

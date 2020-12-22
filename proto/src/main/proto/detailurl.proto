@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package com.realestate.crawler.proto;
+
+import "response.proto";
+
+option java_multiple_files = true;
+option java_package = "com.realestate.crawler.proto";
+
+service DetailurlController {
+  rpc Create(CreateDetailUrl) returns (Response);
+  rpc Get(GetDetailUrl) returns (Detailurl);
+}
+
+message CreateDetailUrl {
+  string url = 1;
+  int64 dataSourceId = 2;
+}
+
+message GetDetailUrl {
+  int64 id = 1;
+}
+
+message Detailurl{
+  int64 id = 1;
+  string url = 2;
+  string checkSumUrl = 3;
+  string htmlContent = 4;
+  string checkSumHtmlContent = 5;
+  int32 status = 6;
+  int64 dataSourceId = 7;
+}
+
+message DetailurlResponse{
+  Detailurl detailUrl = 1;
+}

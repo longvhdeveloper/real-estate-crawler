@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: admin-service
+
+  datasource:
+    username: root
+    password: 1234567890
+    url: jdbc:mysql://localhost:3306/real_estate_crawler?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&allowPublicKeyRetrieval=true
+    driverClassName: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+    hibernate.ddl-auto: update
+    generate-ddl: true
+    show-sql: true
+
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+logging:
+  level:
+    org:
+      springframework: error
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+    instance:
+      preferIpAddress: true
+
+server:
+  port: 8083
+
+kafka:
+  topic:
+    downloadStarter01: starter-1
+    downloadStarter02: starter-2

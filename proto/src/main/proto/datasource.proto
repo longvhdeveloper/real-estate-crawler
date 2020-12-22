@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package com.realestate.crawler.proto;
+
+import "response.proto";
+
+option java_multiple_files = true;
+option java_package = "com.realestate.crawler.proto";
+
+service DataSourceCommandController {
+  rpc Create(CreateDatasource) returns (Response);
+}
+
+service DataSourceQueryController {
+  rpc Get(GetDatasource) returns (DatasourceResponse);
+}
+
+message CreateDatasource{
+  string name = 1;
+  string url = 2;
+}
+
+message GetDatasource{
+  int64 id = 1;
+}
+
+message Datasource {
+  int64 id = 1;
+  string name = 2;
+  string url = 3;
+  int32 status = 4;
+}
+
+message DatasourceResponse {
+  Datasource datasource = 1;
+}
+
+message DatasourceListResponse {
+  repeated Datasource datasource = 1;
+}
