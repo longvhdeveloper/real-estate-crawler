@@ -4,15 +4,12 @@ import com.realestate.crawler.admin.commandside.command.CreateDataSourceCommand;
 import com.realestate.crawler.admin.commandside.command.ICommand;
 import com.realestate.crawler.admin.commandside.repository.IDataSourceRepository;
 import com.realestate.crawler.proto.CreateDatasource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class CreateDataSourceCommandHandler implements ICommandHandler {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     private final IDataSourceRepository dataSourceRepository;
 
     public CreateDataSourceCommandHandler(IDataSourceRepository dataSourceRepository) {

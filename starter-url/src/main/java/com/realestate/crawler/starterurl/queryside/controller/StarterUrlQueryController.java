@@ -68,7 +68,10 @@ public class StarterUrlQueryController extends StarterUrlQueryControllerGrpc.Sta
     public void getList(GetStaterUrls request, StreamObserver<StarterUrlListResponse> responseObserver) {
         logger.info("stater url request get {}", request);
 
-        List<StarterUrl> starterUrls = getStarterUrlsQueryHandler.getStarterUrls(GetStarterUrlsQuery.builder().build());
+        List<StarterUrl> starterUrls = getStarterUrlsQueryHandler.getStarterUrls(GetStarterUrlsQuery.builder().
+                dataSourceId(request.getDataSourceId())
+                .status(request.getStatus())
+                .build());
         StarterUrlListResponse response = StarterUrlListResponse.newBuilder()
                 .addAllStarterUrl(starterUrls.stream().map(starterUrl -> Starterurl.newBuilder().setId(starterUrl.getId())
                         .setDataSourceId(starterUrl.getDataSourceId())

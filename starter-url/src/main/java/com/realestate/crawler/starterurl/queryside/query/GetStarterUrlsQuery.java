@@ -6,4 +6,6 @@ import lombok.Data;
 @Builder
 @Data
 public class GetStarterUrlsQuery {
+    private long dataSourceId;
+    private int status;
 }
