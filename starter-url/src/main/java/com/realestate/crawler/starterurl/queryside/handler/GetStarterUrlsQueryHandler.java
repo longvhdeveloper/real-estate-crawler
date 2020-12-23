@@ -25,11 +25,9 @@ public class GetStarterUrlsQueryHandler {
     }
 
     public List<StarterUrl> getStarterUrls(GetStarterUrlsQuery query) {
-        System.out.println(query);
         List<StarterUrl> starterUrls = new LinkedList<>();
 
         List<Specification<StarterUrl>> specifications = getSpecifications(query);
-        System.out.println();
         if (specifications.isEmpty()) {
             starterUrlQueryRepository.findAll().forEach(starterUrls::add);
         } else {

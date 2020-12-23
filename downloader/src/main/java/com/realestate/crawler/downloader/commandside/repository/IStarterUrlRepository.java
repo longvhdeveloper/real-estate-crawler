@@ -1,14 +1,13 @@
-package com.realestate.crawler.admin.commandside.repository;
+package com.realestate.crawler.downloader.commandside.repository;
 
-import com.realestate.crawler.proto.CreateStaterUrl;
-import com.realestate.crawler.proto.GetStaterUrls;
 import com.realestate.crawler.proto.Starterurl;
+import com.realestate.crawler.proto.UpdateHtmlContentStarterUrl;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface IStarterUrlRepository {
 
-    boolean create(CreateStaterUrl createStaterUrl);
+    boolean updateHtmlContent(UpdateHtmlContentStarterUrl updateHtmlContentStarterUrl);
 
-    List<Starterurl> getStarterUrls(GetStaterUrls getStaterUrls);
+    Optional<Starterurl> getStarterUrlByUrl(long dataSourceId, String checkSumUrl);
 }

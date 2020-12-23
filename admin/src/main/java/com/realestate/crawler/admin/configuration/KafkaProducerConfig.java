@@ -1,6 +1,6 @@
 package com.realestate.crawler.admin.configuration;
 
-import com.realestate.crawler.admin.commandside.message.AbstractMessage;
+import com.realestate.crawler.admin.message.AbstractMessage;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;

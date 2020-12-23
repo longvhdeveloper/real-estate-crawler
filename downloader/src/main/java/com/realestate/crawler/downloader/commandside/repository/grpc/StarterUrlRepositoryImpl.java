@@ -1,8 +1,8 @@
-package com.realestate.crawler.admin.commandside.repository.grpc;
+package com.realestate.crawler.downloader.commandside.repository.grpc;
 
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
-import com.realestate.crawler.admin.commandside.repository.IStarterUrlRepository;
+import com.realestate.crawler.downloader.commandside.repository.IStarterUrlRepository;
 import com.realestate.crawler.proto.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Slf4j
@@ -24,14 +24,15 @@ public class StarterUrlRepositoryImpl implements IStarterUrlRepository {
     }
 
     @Override
-    public boolean create(CreateStaterUrl createStaterUrl) {
-        log.info("starter url: {}", createStaterUrl);
+    public boolean updateHtmlContent(UpdateHtmlContentStarterUrl updateHtmlContentStarterUrl) {
+        log.info("starter url: {}", updateHtmlContentStarterUrl);
+
         ManagedChannel channel = getManagedChannel();
 
         StarterUrlCommandControllerGrpc.StarterUrlCommandControllerBlockingStub stub
                 = StarterUrlCommandControllerGrpc.newBlockingStub(channel);
 
-        Response response = stub.create(createStaterUrl);
+        Response response = stub.updateHtmlContent(updateHtmlContentStarterUrl);
 
         channel.shutdown();
 
@@ -39,13 +40,21 @@ public class StarterUrlRepositoryImpl implements IStarterUrlRepository {
     }
 
     @Override
-    public List<Starterurl> getStarterUrls(GetStaterUrls getStaterUrls) {
-        log.info("starter url: {}", getStaterUrls);
+    public Optional<Starterurl> getStarterUrlByUrl(long dataSourceId, String url) {
+        log.info("starter url: {}", url);
+
         ManagedChannel channel = getManagedChannel();
 
-        StarterUrlQueryControllerGrpc.StarterUrlQueryControllerBlockingStub stub
-                = StarterUrlQueryControllerGrpc.newBlockingStub(channel);
-        return stub.getList(getStaterUrls).getStarterUrlList();
+        StarterUrlQueryControllerGrpc.StarterUrlQueryControllerBlockingStub
+                stub = StarterUrlQueryControllerGrpc.newBlockingStub(channel);
+        StarterUrlResponse starterUrlResponse = stub.getByUrl(GetStarterUrlByUrl.newBuilder()
+                .setUrl(url)
+                .setDataSourceId(dataSourceId)
+                .build());
+
+        channel.shutdown();
+
+        return Optional.of(starterUrlResponse.getStarterUrl());
     }
 
     private ManagedChannel getManagedChannel() {

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class GetStarterUrlByCheckSumQuery {
+public class GetStarterUrlByUrlQuery {
     private long dataSourceId;
-    private String checkSum;
+    private String url;
 }

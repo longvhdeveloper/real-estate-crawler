@@ -28,6 +28,7 @@
         <module>starter-url</module>
         <module>detail-url</module>
         <module>admin</module>
+        <module>downloader</module>
     </modules>
 
     <dependencies>

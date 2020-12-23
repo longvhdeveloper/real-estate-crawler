@@ -3,21 +3,23 @@ package com.realestate.crawler.starterurl.commandside.handler;
 import com.realestate.crawler.starterurl.commandside.command.ICommand;
 import com.realestate.crawler.starterurl.commandside.command.UpdateHtmlContentCommand;
 import com.realestate.crawler.starterurl.commandside.repository.StarterUrlCommandRepository;
-import com.realestate.crawler.starterurl.commandside.validator.CreateStaterUrlCommandValidator;
+import com.realestate.crawler.starterurl.commandside.validator.UpdateHtmlContentCommandValidator;
 import com.realestate.crawler.starterurl.entity.StarterUrl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+@Component
 public class UpdateHtmlContentCommandHandler implements ICommandHandler {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final CreateStaterUrlCommandValidator validator;
+    private final UpdateHtmlContentCommandValidator validator;
     private final StarterUrlCommandRepository starterUrlCommandRepository;
 
-    public UpdateHtmlContentCommandHandler(CreateStaterUrlCommandValidator validator,
+    public UpdateHtmlContentCommandHandler(UpdateHtmlContentCommandValidator validator,
                                            StarterUrlCommandRepository starterUrlCommandRepository) {
         this.validator = validator;
         this.starterUrlCommandRepository = starterUrlCommandRepository;

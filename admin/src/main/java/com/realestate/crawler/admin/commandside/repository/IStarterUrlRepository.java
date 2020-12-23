@@ -11,4 +11,6 @@ public interface IStarterUrlRepository {
     boolean create(CreateStaterUrl createStaterUrl);
 
     List<Starterurl> getStarterUrls(GetStaterUrls getStaterUrls);
+
+    //Optional<Starterurl> getStarterUrlByUrl()
 }

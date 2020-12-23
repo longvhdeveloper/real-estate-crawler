@@ -2,7 +2,7 @@ package com.realestate.crawler.admin.commandside.handler;
 
 import com.realestate.crawler.admin.commandside.command.ExecuteStarterUrlsByDataSourceCommand;
 import com.realestate.crawler.admin.commandside.command.ICommand;
-import com.realestate.crawler.admin.commandside.message.DownloadStarterUrlMessage;
+import com.realestate.crawler.admin.message.DownloadStarterUrlMessage;
 import com.realestate.crawler.admin.commandside.repository.IDataSourceRepository;
 import com.realestate.crawler.admin.commandside.repository.IStarterUrlRepository;
 import com.realestate.crawler.admin.producer.IProducer;
