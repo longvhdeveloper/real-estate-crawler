@@ -33,7 +33,7 @@ public class DataSourceQueryController extends DataSourceQueryControllerGrpc.Dat
 
         logger.info("data source request get {}", request);
 
-        Optional<DataSource> optional = getDataSourceQueryHandler.getDataSource(
+        Optional<DataSource> optional = getDataSourceQueryHandler.handler(
                 GetDataSourceQuery.builder().id(request.getId()).build());
 
         if (optional.isEmpty()) {

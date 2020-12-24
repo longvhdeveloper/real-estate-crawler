@@ -29,6 +29,7 @@
         <module>detail-url</module>
         <module>admin</module>
         <module>downloader</module>
+        <module>extractor</module>
     </modules>
 
     <dependencies>

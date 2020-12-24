@@ -25,12 +25,11 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka
-    instance:
-      preferIpAddress: true
-      non-secure-port: 6567
+  instance:
+    nonSecurePort: 6567
 
 grpc:
   port: 6567
 
 server:
-  port: 8082
+  port: 8085

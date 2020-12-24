@@ -7,9 +7,14 @@ import "response.proto";
 option java_multiple_files = true;
 option java_package = "com.realestate.crawler.proto";
 
-service DetailurlController {
+service DetailurlCommandController {
   rpc Create(CreateDetailUrl) returns (Response);
-  rpc Get(GetDetailUrl) returns (Detailurl);
+  rpc UpdateHtmlContent(UpdateHtmlContentDetailUrl) returns (Response);
+}
+
+service DetailurlQueryController {
+  rpc Get(GetDetailUrl) returns (DetailurlResponse);
+  rpc GetByUrl(GetDetailUrlByUrl) returns (DetailurlResponse);
 }
 
 message CreateDetailUrl {
@@ -17,8 +22,17 @@ message CreateDetailUrl {
   int64 dataSourceId = 2;
 }
 
+message UpdateHtmlContentDetailUrl {
+  int64 id = 1;
+  string htmlContent = 2;
+}
+
 message GetDetailUrl {
   int64 id = 1;
+}
+
+message GetDetailUrlByUrl {
+  string url = 1;
 }
 
 message Detailurl{
