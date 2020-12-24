@@ -34,3 +34,4 @@ kafka:
   topic:
     downloadStarter01: download-starter-1
     downloadStarter02: download-starter-2
+    downloadDetail01: download-detail-1

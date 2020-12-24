@@ -68,7 +68,7 @@ public class DownloadTopicStarterUrl01CommandHandler implements ICommandHandler 
 
         Optional<Document> documentOptional = downloadService.downloadWebPage(starterurl.getUrl());
         if (documentOptional.isPresent()) {
-            log.info("Starting update HTML content");
+            log.info("Starting update HTML content starter url");
             starterUrlRepository.updateHtmlContent(UpdateHtmlContentStarterUrl.newBuilder()
                     .setId(starterurl.getId())
                     .setHtmlContent(documentOptional.get().html())
