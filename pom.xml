@@ -30,6 +30,7 @@
         <module>admin</module>
         <module>downloader</module>
         <module>extractor</module>
+        <module>property</module>
     </modules>
 
     <dependencies>
