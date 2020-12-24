@@ -2,9 +2,9 @@ package com.realestate.crawler.admin.commandside.handler;
 
 import com.realestate.crawler.admin.commandside.command.ExecuteStarterUrlsByDataSourceCommand;
 import com.realestate.crawler.admin.commandside.command.ICommand;
-import com.realestate.crawler.admin.message.DownloadStarterUrlMessage;
 import com.realestate.crawler.admin.commandside.repository.IDataSourceRepository;
 import com.realestate.crawler.admin.commandside.repository.IStarterUrlRepository;
+import com.realestate.crawler.admin.message.DownloadStarterUrlMessage;
 import com.realestate.crawler.admin.producer.IProducer;
 import com.realestate.crawler.proto.Datasource;
 import com.realestate.crawler.proto.GetStaterUrls;
@@ -44,9 +44,8 @@ public class ExecuteStarterUrlsByDataSourceCommandHandler implements ICommandHan
             return false;
         }
 
-        String topic = getTopic(datasource);
         starterUrls.stream().filter(this::isStarterUrlEnabled).forEach(starterUrl -> {
-            producer.send(topic, new DownloadStarterUrlMessage(starterUrl.getDataSourceId(), starterUrl.getUrl()));
+            sendToDownloadStarterUrl(datasource, starterUrl);
         });
 
         return true;
@@ -75,7 +74,12 @@ public class ExecuteStarterUrlsByDataSourceCommandHandler implements ICommandHan
         return starterurl.getStatus() == 1;
     }
 
+    private void sendToDownloadStarterUrl(Datasource datasource, Starterurl starterurl) {
+        String topic = getTopic(datasource);
+        producer.send(topic, new DownloadStarterUrlMessage(starterurl.getDataSourceId(), starterurl.getUrl()));
+    }
+
     private String getTopic(Datasource datasource) {
-        return "starter-" + datasource.getId();
+        return "download-starter-" + datasource.getId();
     }
 }

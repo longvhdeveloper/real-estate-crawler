@@ -1,4 +1,4 @@
-package com.realestate.crawler.downloader.commandside.service;
+package com.realestate.crawler.downloader.consumer;
 
 import com.realestate.crawler.downloader.commandside.command.DownloadStarterUrlCommand;
 import com.realestate.crawler.downloader.commandside.handler.DownloadTopicStarterUrl01CommandHandler;
@@ -10,12 +10,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class DownloadStarterUrl01TopicConsumerService {
+public class DownloadStarterUrl01TopicConsumer {
 
     private final DownloadTopicStarterUrl01CommandHandler handler;
 
     @Autowired
-    public DownloadStarterUrl01TopicConsumerService(DownloadTopicStarterUrl01CommandHandler handler) {
+    public DownloadStarterUrl01TopicConsumer(DownloadTopicStarterUrl01CommandHandler handler) {
         this.handler = handler;
     }
 

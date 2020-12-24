@@ -45,7 +45,12 @@ public class StarterUrlRepositoryImpl implements IStarterUrlRepository {
 
         StarterUrlQueryControllerGrpc.StarterUrlQueryControllerBlockingStub stub
                 = StarterUrlQueryControllerGrpc.newBlockingStub(channel);
-        return stub.getList(getStaterUrls).getStarterUrlList();
+
+        List<Starterurl> starterUrlList = stub.getList(getStaterUrls).getStarterUrlList();
+
+        channel.shutdown();
+
+        return starterUrlList;
     }
 
     private ManagedChannel getManagedChannel() {

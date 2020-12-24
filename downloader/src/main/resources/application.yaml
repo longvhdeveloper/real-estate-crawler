@@ -32,5 +32,5 @@ server:
 
 kafka:
   topic:
-    downloadStarter01: starter-1
-    downloadStarter02: starter-2
+    downloadStarter01: download-starter-1
+    downloadStarter02: download-starter-2

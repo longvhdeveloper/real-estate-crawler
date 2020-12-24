@@ -5,11 +5,14 @@ import com.realestate.crawler.downloader.commandside.command.ICommand;
 import com.realestate.crawler.downloader.commandside.repository.IDataSourceRepository;
 import com.realestate.crawler.downloader.commandside.repository.IStarterUrlRepository;
 import com.realestate.crawler.downloader.commandside.service.DownloadService;
+import com.realestate.crawler.downloader.message.ExtractStarterUrlMessage;
+import com.realestate.crawler.downloader.producer.IProducer;
 import com.realestate.crawler.proto.Datasource;
 import com.realestate.crawler.proto.Starterurl;
 import com.realestate.crawler.proto.UpdateHtmlContentStarterUrl;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -23,12 +26,17 @@ public class DownloadTopicStarterUrl01CommandHandler implements ICommandHandler 
 
     private final DownloadService downloadService;
 
+    private final IProducer producer;
+
+    @Autowired
     public DownloadTopicStarterUrl01CommandHandler(IDataSourceRepository dataSourceRepository,
                                                    IStarterUrlRepository starterUrlRepository,
-                                                   DownloadService downloadService) {
+                                                   DownloadService downloadService,
+                                                   IProducer producer) {
         this.dataSourceRepository = dataSourceRepository;
         this.starterUrlRepository = starterUrlRepository;
         this.downloadService = downloadService;
+        this.producer = producer;
     }
 
     @Override
@@ -52,6 +60,12 @@ public class DownloadTopicStarterUrl01CommandHandler implements ICommandHandler 
         }
 
         Starterurl starterurl = optional.get();
+
+        if (!isStarterUrlEnabled(starterurl)) {
+            log.warn("Starter Url {} is disabled", downloadStarterUrlCommand.getUrl());
+            return false;
+        }
+
         Optional<Document> documentOptional = downloadService.downloadWebPage(starterurl.getUrl());
         if (documentOptional.isPresent()) {
             log.info("Starting update HTML content");
@@ -59,6 +73,9 @@ public class DownloadTopicStarterUrl01CommandHandler implements ICommandHandler 
                     .setId(starterurl.getId())
                     .setHtmlContent(documentOptional.get().html())
                     .build());
+
+            sendToExtractorStarterUrl(starterurl);
+
             return true;
         }
 
@@ -71,5 +88,14 @@ public class DownloadTopicStarterUrl01CommandHandler implements ICommandHandler 
 
     private boolean isStarterUrlEnabled(Starterurl starterurl) {
         return starterurl.getStatus() == 1;
+    }
+
+    private void sendToExtractorStarterUrl(Starterurl starterurl) {
+        String topic = getExtractorTopic(starterurl);
+        producer.send(topic, ExtractStarterUrlMessage.builder().id(starterurl.getId()).build());
+    }
+
+    private String getExtractorTopic(Starterurl starterurl) {
+        return "extract-starter-" + starterurl.getDataSourceId();
     }
 }
