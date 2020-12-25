@@ -4,6 +4,8 @@ import com.realestate.crawler.downloader.commandside.command.DownloadDetailUrlCo
 import com.realestate.crawler.downloader.commandside.command.ICommand;
 import com.realestate.crawler.downloader.commandside.repository.IDetailUrlRepository;
 import com.realestate.crawler.downloader.commandside.service.DownloadService;
+import com.realestate.crawler.downloader.message.ExtractDetailUrlMessage;
+import com.realestate.crawler.downloader.producer.IProducer;
 import com.realestate.crawler.proto.Detailurl;
 import com.realestate.crawler.proto.UpdateHtmlContentDetailUrl;
 import lombok.extern.slf4j.Slf4j;
@@ -19,12 +21,14 @@ public class DownloadTopicDetailUrl01CommandHandler implements ICommandHandler {
 
     private final IDetailUrlRepository detailUrlRepository;
     private final DownloadService downloadService;
+    private final IProducer producer;
 
     @Autowired
     public DownloadTopicDetailUrl01CommandHandler(IDetailUrlRepository detailUrlRepository,
-                                                  DownloadService downloadService) {
+                                                  DownloadService downloadService, IProducer producer) {
         this.detailUrlRepository = detailUrlRepository;
         this.downloadService = downloadService;
+        this.producer = producer;
     }
 
     @Override
@@ -52,13 +56,24 @@ public class DownloadTopicDetailUrl01CommandHandler implements ICommandHandler {
                     .setId(detailUrl.getId())
                     .setHtmlContent(documentOptional.get().html())
                     .build());
+
+            sendToExtractDetailUrl(detailUrl);
             return true;
         }
 
         return false;
     }
 
+    private void sendToExtractDetailUrl(Detailurl detailUrl) {
+        String topic = getExtractorDetailUrlTopic(detailUrl);
+        producer.send(topic, ExtractDetailUrlMessage.builder().id(detailUrl.getId()).build());
+    }
+
     private boolean isDetailUrlEnabled(Detailurl detailUrl) {
         return detailUrl.getStatus() == 1;
+    }
+
+    private String getExtractorDetailUrlTopic(Detailurl detailUrl) {
+        return "extract-detail-" + detailUrl.getDataSourceId();
     }
 }

@@ -46,10 +46,11 @@ public class DetailUrlRepositoryImpl implements IDetailUrlRepository {
         DetailurlQueryControllerGrpc.DetailurlQueryControllerBlockingStub stub
                 = DetailurlQueryControllerGrpc.newBlockingStub(channel);
 
+        DetailurlResponse response = stub.get(GetDetailUrl.newBuilder().setId(id).build());
 
         channel.shutdown();
 
-        return Optional.empty();
+        return Optional.of(response.getDetailUrl());
     }
 
     @Override

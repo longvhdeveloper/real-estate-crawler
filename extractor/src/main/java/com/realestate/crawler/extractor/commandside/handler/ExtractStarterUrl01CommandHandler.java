@@ -7,6 +7,7 @@ import com.realestate.crawler.extractor.commandside.repository.IDetailUrlReposit
 import com.realestate.crawler.extractor.commandside.repository.IStarterUrlRepository;
 import com.realestate.crawler.extractor.commandside.service.ExtractStarterUrl01Service;
 import com.realestate.crawler.extractor.message.DownloadDetailUrlMessage;
+import com.realestate.crawler.extractor.message.NextStarterUrlMessage;
 import com.realestate.crawler.extractor.producer.IProducer;
 import com.realestate.crawler.proto.CreateDetailUrl;
 import com.realestate.crawler.proto.Datasource;
@@ -59,6 +60,7 @@ public class ExtractStarterUrl01CommandHandler implements ICommandHandler {
             return false;
         }
         processStarterUrl(starterUrl);
+        sendToNextStarterUrl(starterUrl);
 
         return true;
     }
@@ -97,6 +99,11 @@ public class ExtractStarterUrl01CommandHandler implements ICommandHandler {
         producer.send(topic, DownloadDetailUrlMessage.builder().url(url).build());
     }
 
+    private void sendToNextStarterUrl(Starterurl starterUrl) {
+        String topic = getNextStarterUrlTopic(starterUrl);
+        producer.send(topic, new NextStarterUrlMessage(starterUrl.getId()));
+    }
+
     private boolean isStarterUrlEnabled(Starterurl starterUrl) {
         return starterUrl.getStatus() == 1;
     }
@@ -107,5 +114,9 @@ public class ExtractStarterUrl01CommandHandler implements ICommandHandler {
 
     private String getDownloadDetailTopic(Starterurl starterUrl) {
         return "download-detail-" + starterUrl.getDataSourceId();
+    }
+
+    private String getNextStarterUrlTopic(Starterurl starterUrl) {
+        return "next-starter-url-" + starterUrl.getDataSourceId();
     }
 }

@@ -34,3 +34,5 @@ kafka:
   topic:
     extractStarter01: extract-starter-1
     extractStarter02: extract-starter-2
+    extractDetail01: extract-detail-1
+    nextStarter01: next-starter-url-1
