@@ -25,7 +25,7 @@ public class StarterUrlRepositoryImpl implements IStarterUrlRepository {
 
     @Override
     public boolean updateHtmlContent(UpdateHtmlContentStarterUrl updateHtmlContentStarterUrl) {
-        log.info("starter url: {}", updateHtmlContentStarterUrl);
+        log.info("update html content starter url: {}", updateHtmlContentStarterUrl.getId());
 
         ManagedChannel channel = getManagedChannel();
 

@@ -54,25 +54,27 @@ public class NextStarterUrl01CommandHandler implements ICommandHandler {
             int nextPageNumber = currentPageNumber + 1;
             nextStarterUrl = nextStarterUrl + "/p" + nextPageNumber;
             log.info("==== NEXT URL {}", nextStarterUrl);
-            createStarterUrl(nextStarterUrl);
-            sendToDownloadStarterUrl(starterUrl);
+            createStarterUrl(nextStarterUrl, starterUrl);
+            sendToDownloadStarterUrl(nextStarterUrl, starterUrl);
             return true;
         }
 
         return false;
     }
 
-    private void createStarterUrl(String url) {
+    private void createStarterUrl(String url, Starterurl starterurl) {
+        log.info("Create next starter url......");
         starterUrlRepository.create(CreateStaterUrl.newBuilder()
                 .addUrls(Url.newBuilder()
                         .setUrlString(url)
                         .build())
+                .setDataSourceId(starterurl.getDataSourceId())
                 .build());
     }
 
-    private void sendToDownloadStarterUrl(Starterurl starterurl) {
+    private void sendToDownloadStarterUrl(String url, Starterurl starterurl) {
         String topic = getTopic(starterurl);
-        producer.send(topic, new DownloadStarterUrlMessage(starterurl.getDataSourceId(), starterurl.getUrl()));
+        producer.send(topic, new DownloadStarterUrlMessage(starterurl.getDataSourceId(), url));
     }
 
     private boolean isStarterUrlEnabled(Starterurl starterUrl) {

@@ -44,7 +44,7 @@ public class DetailUrlCommandController extends DetailurlCommandControllerGrpc.D
 
     @Override
     public void updateHtmlContent(UpdateHtmlContentDetailUrl request, StreamObserver<Response> responseObserver) {
-        log.info("update detail url content request received {}", request);
+        log.info("update detail url content request received {}", request.getId());
 
         int status = 0;
         if (updateHtmlContentCommandHandler.handler(UpdateHtmlContentCommand.builder().id(request.getId())

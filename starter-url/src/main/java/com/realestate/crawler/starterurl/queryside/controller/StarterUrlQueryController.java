@@ -62,7 +62,7 @@ public class StarterUrlQueryController extends StarterUrlQueryControllerGrpc.Sta
                 .setCheckSumHtmlContent(Objects.toString(starterUrl.getCheckSumHtmlContent(), ""))
                 .setStatus(starterUrl.getStatus().getStatus())
                 .build()).build();
-        log.info("server responded {}", response);
+        log.info("server responded {}", response.getStarterUrl().getUrl());
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
@@ -85,7 +85,7 @@ public class StarterUrlQueryController extends StarterUrlQueryControllerGrpc.Sta
                         .setStatus(starterUrl.getStatus().getStatus()).build()).collect(Collectors.toList()))
                 .build();
 
-        log.info("server responded {}", response);
+        log.info("server responded number of starter url {}", response.getStarterUrlCount());
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
@@ -116,7 +116,7 @@ public class StarterUrlQueryController extends StarterUrlQueryControllerGrpc.Sta
                 .setCheckSumHtmlContent(Objects.toString(starterUrl.getCheckSumHtmlContent(), ""))
                 .setStatus(starterUrl.getStatus().getStatus())
                 .build()).build();
-        log.info("server responded {}", response);
+        log.info("server responded {}", response.getStarterUrl().getUrl());
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }

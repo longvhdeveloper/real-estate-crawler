@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -44,16 +45,19 @@ public class ExecuteStarterUrlsByDataSourceCommandHandler implements ICommandHan
             return false;
         }
 
-        starterUrls.stream().filter(this::isStarterUrlEnabled).forEach(starterUrl -> {
-            sendToDownloadStarterUrl(datasource, starterUrl);
-        });
+        starterUrls.stream().filter(this::isStarterUrlEnabled).forEach(starterUrl -> sendToDownloadStarterUrl(datasource, starterUrl));
 
         return true;
     }
 
     private Datasource getDataSource(long id) {
-        Datasource datasource = dataSourceRepository.get(id).orElseThrow(
-                () -> new IllegalArgumentException("Data source with id " + id + " is not exist"));
+        Optional<Datasource> optional = dataSourceRepository.get(id);
+        if (optional.isEmpty() || optional.get().getId() == 0) {
+            throw new IllegalArgumentException("Data source with id " + id + " is not exist");
+        }
+
+        Datasource datasource = optional.get();
+
         if (!isDataSourceEnabled(datasource)) {
             throw new IllegalArgumentException("Data source with id " + id + " is disabled");
         }

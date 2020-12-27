@@ -53,7 +53,7 @@ public class DetailUrlQueryController extends DetailurlQueryControllerGrpc.Detai
                 .setCheckSumHtmlContent(Objects.toString(detailUrl.getCheckSumHtmlContent(), ""))
                 .setStatus(detailUrl.getStatus().getStatus())
                 .build()).build();
-        log.info("server responded {}", response);
+        log.info("server responded {}", response.getDetailUrl().getUrl());
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
@@ -84,7 +84,7 @@ public class DetailUrlQueryController extends DetailurlQueryControllerGrpc.Detai
                 .setStatus(detailUrl.getStatus().getStatus())
                 .build()).build();
 
-        log.info("server responded {}", response);
+        log.info("server responded {}", response.getDetailUrl().getUrl());
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }

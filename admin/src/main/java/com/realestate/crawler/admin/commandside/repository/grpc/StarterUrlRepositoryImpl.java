@@ -25,7 +25,7 @@ public class StarterUrlRepositoryImpl implements IStarterUrlRepository {
 
     @Override
     public boolean create(CreateStaterUrl createStaterUrl) {
-        log.info("starter url: {}", createStaterUrl);
+        log.info("create starter url: {}", createStaterUrl);
         ManagedChannel channel = getManagedChannel();
 
         StarterUrlCommandControllerGrpc.StarterUrlCommandControllerBlockingStub stub
