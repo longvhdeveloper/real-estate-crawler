@@ -45,7 +45,7 @@ docker-compose up --build
 
 ##### Step 2
 
-Access url http://{your-host-machine}:8083/swagger-ui and execute these steps below by order
+Access url http://{your-host-machine}:8083/swagger-ui.html and execute these steps below by order
 
 * Create data source You can copy this json below to create data source by API /v1/admin/data-source to request body
     ```
