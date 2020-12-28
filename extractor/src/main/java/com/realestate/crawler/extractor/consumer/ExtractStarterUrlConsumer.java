@@ -1,7 +1,7 @@
 package com.realestate.crawler.extractor.consumer;
 
-import com.realestate.crawler.extractor.commandside.command.ExtractStarterUrl01Command;
-import com.realestate.crawler.extractor.commandside.handler.ExtractStarterUrl01CommandHandler;
+import com.realestate.crawler.extractor.commandside.command.ExtractStarterUrlCommand;
+import com.realestate.crawler.extractor.commandside.handler.ExtractStarterUrlCommandHandler;
 import com.realestate.crawler.extractor.message.ExtractStarterUrlMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,21 +10,21 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class ExtractStarterUrl01TopicConsumer {
+public class ExtractStarterUrlConsumer {
 
-    private final ExtractStarterUrl01CommandHandler handler;
+    private final ExtractStarterUrlCommandHandler handler;
 
     @Autowired
-    public ExtractStarterUrl01TopicConsumer(ExtractStarterUrl01CommandHandler handler) {
+    public ExtractStarterUrlConsumer(ExtractStarterUrlCommandHandler handler) {
         this.handler = handler;
     }
 
-    @KafkaListener(topics = "${kafka.topic.extractStarter01}",
+    @KafkaListener(topics = "${spring.kafka.topic.extractStarter}",
             containerFactory = "extractStarterUrlKafkaListenerContainerFactory")
     public void listen(ExtractStarterUrlMessage message) {
 
-        log.info("Received download starter url 01 message: {}", message);
-        handler.handler(ExtractStarterUrl01Command.builder()
+        log.info("Received download starter url message: {}", message);
+        handler.handler(ExtractStarterUrlCommand.builder()
                 .id(message.getId())
                 .build());
     }

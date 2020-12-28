@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class NextStarterUrl01Command implements ICommand {
+public class GetNextStarterUrlCommand implements ICommand {
     private long id;
 }

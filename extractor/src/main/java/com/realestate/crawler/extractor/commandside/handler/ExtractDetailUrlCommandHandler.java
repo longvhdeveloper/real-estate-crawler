@@ -1,6 +1,6 @@
 package com.realestate.crawler.extractor.commandside.handler;
 
-import com.realestate.crawler.extractor.commandside.command.ExtractDetailUrl01Command;
+import com.realestate.crawler.extractor.commandside.command.ExtractDetailUrlCommand;
 import com.realestate.crawler.extractor.commandside.command.ICommand;
 import com.realestate.crawler.extractor.commandside.repository.IDetailUrlRepository;
 import com.realestate.crawler.extractor.commandside.repository.IPropertyRepository;
@@ -14,16 +14,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class ExtractDetailUrl01CommandHandler implements ICommandHandler {
+public class ExtractDetailUrlCommandHandler implements ICommandHandler {
 
     private final IPropertyRepository propertyRepository;
     private final IDetailUrlRepository detailUrlRepository;
     private final ExtractDetailUrl01Service extractDetailUrl01Service;
 
     @Autowired
-    public ExtractDetailUrl01CommandHandler(IPropertyRepository propertyRepository,
-                                            IDetailUrlRepository detailUrlRepository,
-                                            ExtractDetailUrl01Service extractDetailUrl01Service) {
+    public ExtractDetailUrlCommandHandler(IPropertyRepository propertyRepository,
+                                          IDetailUrlRepository detailUrlRepository,
+                                          ExtractDetailUrl01Service extractDetailUrl01Service) {
         this.propertyRepository = propertyRepository;
         this.detailUrlRepository = detailUrlRepository;
         this.extractDetailUrl01Service = extractDetailUrl01Service;
@@ -32,10 +32,10 @@ public class ExtractDetailUrl01CommandHandler implements ICommandHandler {
     @Override
     public boolean handler(ICommand command) {
 
-        ExtractDetailUrl01Command extractDetailUrl01Command = (ExtractDetailUrl01Command) command;
+        ExtractDetailUrlCommand extractDetailUrlCommand = (ExtractDetailUrlCommand) command;
 
-        Detailurl detailurl = detailUrlRepository.findById(extractDetailUrl01Command.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Detail url with id " + extractDetailUrl01Command.getId() + " is not exist."));
+        Detailurl detailurl = detailUrlRepository.findById(extractDetailUrlCommand.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Detail url with id " + extractDetailUrlCommand.getId() + " is not exist."));
 
         if (!isDetailUrlEnabled(detailurl)) {
             log.warn("Detail url {} is disabled", detailurl.getUrl());

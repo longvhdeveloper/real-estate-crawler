@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Builder
 @Data
-public class ExtractDetailUrl01Command implements ICommand {
+public class ExtractDetailUrlCommand implements ICommand {
     private long id;
 }

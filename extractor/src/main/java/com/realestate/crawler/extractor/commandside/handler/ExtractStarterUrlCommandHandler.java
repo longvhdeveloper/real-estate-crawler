@@ -1,6 +1,6 @@
 package com.realestate.crawler.extractor.commandside.handler;
 
-import com.realestate.crawler.extractor.commandside.command.ExtractStarterUrl01Command;
+import com.realestate.crawler.extractor.commandside.command.ExtractStarterUrlCommand;
 import com.realestate.crawler.extractor.commandside.command.ICommand;
 import com.realestate.crawler.extractor.commandside.repository.IDataSourceRepository;
 import com.realestate.crawler.extractor.commandside.repository.IDetailUrlRepository;
@@ -15,6 +15,7 @@ import com.realestate.crawler.proto.Detailurl;
 import com.realestate.crawler.proto.Starterurl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.Optional;
 
 @Component
 @Slf4j
-public class ExtractStarterUrl01CommandHandler implements ICommandHandler {
+public class ExtractStarterUrlCommandHandler implements ICommandHandler {
 
     private final IStarterUrlRepository starterUrlRepository;
     private final IDataSourceRepository dataSourceRepository;
@@ -30,12 +31,18 @@ public class ExtractStarterUrl01CommandHandler implements ICommandHandler {
     private final ExtractStarterUrl01Service extractStarterUrl01Service;
     private IProducer producer;
 
+    @Value("${spring.kafka.topic.downloadDetail}")
+    private String downloadDetailUrlTopic;
+
+    @Value("${spring.kafka.topic.nextStarter}")
+    private String getNextStarterUrlTopic;
+
     @Autowired
-    public ExtractStarterUrl01CommandHandler(IStarterUrlRepository starterUrlRepository,
-                                             IDataSourceRepository dataSourceRepository,
-                                             IDetailUrlRepository detailUrlRepository,
-                                             ExtractStarterUrl01Service extractStarterUrl01Service,
-                                             IProducer producer) {
+    public ExtractStarterUrlCommandHandler(IStarterUrlRepository starterUrlRepository,
+                                           IDataSourceRepository dataSourceRepository,
+                                           IDetailUrlRepository detailUrlRepository,
+                                           ExtractStarterUrl01Service extractStarterUrl01Service,
+                                           IProducer producer) {
         this.starterUrlRepository = starterUrlRepository;
         this.dataSourceRepository = dataSourceRepository;
         this.detailUrlRepository = detailUrlRepository;
@@ -45,10 +52,10 @@ public class ExtractStarterUrl01CommandHandler implements ICommandHandler {
 
     @Override
     public boolean handler(ICommand command) {
-        ExtractStarterUrl01Command extractStarterUrl01Command = (ExtractStarterUrl01Command) command;
+        ExtractStarterUrlCommand extractStarterUrlCommand = (ExtractStarterUrlCommand) command;
 
-        Starterurl starterUrl = starterUrlRepository.findById(extractStarterUrl01Command.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Starter url with id " + extractStarterUrl01Command.getId() + " is not exist."));
+        Starterurl starterUrl = starterUrlRepository.findById(extractStarterUrlCommand.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Starter url with id " + extractStarterUrlCommand.getId() + " is not exist."));
 
         if (!isStarterUrlEnabled(starterUrl)) {
             log.warn("Starter URL {} is disabled", starterUrl.getUrl());
@@ -95,13 +102,11 @@ public class ExtractStarterUrl01CommandHandler implements ICommandHandler {
     }
 
     private void sendToDownloadDetailUrl(Starterurl starterUrl, String url) {
-        String topic = getDownloadDetailTopic(starterUrl);
-        producer.send(topic, DownloadDetailUrlMessage.builder().url(url).build());
+        producer.send(downloadDetailUrlTopic, DownloadDetailUrlMessage.builder().url(url).build());
     }
 
     private void sendToNextStarterUrl(Starterurl starterUrl) {
-        String topic = getNextStarterUrlTopic(starterUrl);
-        producer.send(topic, new NextStarterUrlMessage(starterUrl.getId()));
+        producer.send(getNextStarterUrlTopic, new NextStarterUrlMessage(starterUrl.getId()));
     }
 
     private boolean isStarterUrlEnabled(Starterurl starterUrl) {
@@ -110,13 +115,5 @@ public class ExtractStarterUrl01CommandHandler implements ICommandHandler {
 
     private boolean isStarterUrlHtmlContentEmpty(Starterurl starterUrl) {
         return starterUrl.getHtmlContent().isEmpty();
-    }
-
-    private String getDownloadDetailTopic(Starterurl starterUrl) {
-        return "download-detail-" + starterUrl.getDataSourceId();
-    }
-
-    private String getNextStarterUrlTopic(Starterurl starterUrl) {
-        return "next-starter-url-" + starterUrl.getDataSourceId();
     }
 }

@@ -1,7 +1,7 @@
 package com.realestate.crawler.downloader.consumer;
 
 import com.realestate.crawler.downloader.commandside.command.DownloadDetailUrlCommand;
-import com.realestate.crawler.downloader.commandside.handler.DownloadTopicDetailUrl01CommandHandler;
+import com.realestate.crawler.downloader.commandside.handler.DownloadTopicDetailUrlCommandHandler;
 import com.realestate.crawler.downloader.message.DownloadDetailUrlMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,20 +10,20 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class DownloadDetailUrl01TopicConsumer {
+public class DownloadDetailUrlTopicConsumer {
 
-    private final DownloadTopicDetailUrl01CommandHandler handler;
+    private final DownloadTopicDetailUrlCommandHandler handler;
 
     @Autowired
-    public DownloadDetailUrl01TopicConsumer(DownloadTopicDetailUrl01CommandHandler handler) {
+    public DownloadDetailUrlTopicConsumer(DownloadTopicDetailUrlCommandHandler handler) {
         this.handler = handler;
     }
 
-    @KafkaListener(topics = "${kafka.topic.downloadDetail01}",
+    @KafkaListener(topics = "${spring.kafka.topic.downloadDetail}",
             containerFactory = "downloadDetailUrlKafkaListenerContainerFactory")
     public void listen(DownloadDetailUrlMessage message) {
 
-        log.info("Received download detail url 01 message: {}", message);
+        log.info("Received download detail url message: {}", message);
 
         handler.handler(DownloadDetailUrlCommand.builder().url(message.getUrl()).build());
     }

@@ -13,13 +13,14 @@ import com.realestate.crawler.proto.UpdateHtmlContentStarterUrl;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
 @Slf4j
-public class DownloadTopicStarterUrl01CommandHandler implements ICommandHandler {
+public class DownloadTopicStarterUrlCommandHandler implements ICommandHandler {
 
     private final IDataSourceRepository dataSourceRepository;
     private final IStarterUrlRepository starterUrlRepository;
@@ -28,11 +29,14 @@ public class DownloadTopicStarterUrl01CommandHandler implements ICommandHandler 
 
     private final IProducer producer;
 
+    @Value("${spring.kafka.topic.extractStarter}")
+    private String extractStarterTopic;
+
     @Autowired
-    public DownloadTopicStarterUrl01CommandHandler(IDataSourceRepository dataSourceRepository,
-                                                   IStarterUrlRepository starterUrlRepository,
-                                                   DownloadService downloadService,
-                                                   IProducer producer) {
+    public DownloadTopicStarterUrlCommandHandler(IDataSourceRepository dataSourceRepository,
+                                                 IStarterUrlRepository starterUrlRepository,
+                                                 DownloadService downloadService,
+                                                 IProducer producer) {
         this.dataSourceRepository = dataSourceRepository;
         this.starterUrlRepository = starterUrlRepository;
         this.downloadService = downloadService;
@@ -91,11 +95,6 @@ public class DownloadTopicStarterUrl01CommandHandler implements ICommandHandler 
     }
 
     private void sendToExtractorStarterUrl(Starterurl starterurl) {
-        String topic = getExtractorTopic(starterurl);
-        producer.send(topic, ExtractStarterUrlMessage.builder().id(starterurl.getId()).build());
-    }
-
-    private String getExtractorTopic(Starterurl starterurl) {
-        return "extract-starter-" + starterurl.getDataSourceId();
+        producer.send(extractStarterTopic, ExtractStarterUrlMessage.builder().id(starterurl.getId()).build());
     }
 }

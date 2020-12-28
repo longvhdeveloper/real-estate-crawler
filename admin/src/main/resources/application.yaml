@@ -7,6 +7,8 @@ spring:
       bootstrap-servers: localhost:9092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    topic:
+      downloadStarter: download-starter
 
 logging:
   level:
@@ -23,7 +25,3 @@ eureka:
 server:
   port: 8083
 
-kafka:
-  topic:
-    downloadStarter01: starter-1
-    downloadStarter02: starter-2

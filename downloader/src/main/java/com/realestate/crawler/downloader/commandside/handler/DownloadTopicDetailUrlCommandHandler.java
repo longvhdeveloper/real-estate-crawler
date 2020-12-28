@@ -11,21 +11,25 @@ import com.realestate.crawler.proto.UpdateHtmlContentDetailUrl;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
 @Slf4j
-public class DownloadTopicDetailUrl01CommandHandler implements ICommandHandler {
+public class DownloadTopicDetailUrlCommandHandler implements ICommandHandler {
 
     private final IDetailUrlRepository detailUrlRepository;
     private final DownloadService downloadService;
     private final IProducer producer;
 
+    @Value("${spring.kafka.topic.extractDetail}")
+    private String extractDetailTopic;
+
     @Autowired
-    public DownloadTopicDetailUrl01CommandHandler(IDetailUrlRepository detailUrlRepository,
-                                                  DownloadService downloadService, IProducer producer) {
+    public DownloadTopicDetailUrlCommandHandler(IDetailUrlRepository detailUrlRepository,
+                                                DownloadService downloadService, IProducer producer) {
         this.detailUrlRepository = detailUrlRepository;
         this.downloadService = downloadService;
         this.producer = producer;
@@ -65,15 +69,10 @@ public class DownloadTopicDetailUrl01CommandHandler implements ICommandHandler {
     }
 
     private void sendToExtractDetailUrl(Detailurl detailUrl) {
-        String topic = getExtractorDetailUrlTopic(detailUrl);
-        producer.send(topic, ExtractDetailUrlMessage.builder().id(detailUrl.getId()).build());
+        producer.send(extractDetailTopic, ExtractDetailUrlMessage.builder().id(detailUrl.getId()).build());
     }
 
     private boolean isDetailUrlEnabled(Detailurl detailUrl) {
         return detailUrl.getStatus() == 1;
-    }
-
-    private String getExtractorDetailUrlTopic(Detailurl detailUrl) {
-        return "extract-detail-" + detailUrl.getDataSourceId();
     }
 }

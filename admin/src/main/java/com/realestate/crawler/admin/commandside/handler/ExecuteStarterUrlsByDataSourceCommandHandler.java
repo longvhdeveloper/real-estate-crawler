@@ -11,6 +11,7 @@ import com.realestate.crawler.proto.GetStaterUrls;
 import com.realestate.crawler.proto.Starterurl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,6 +24,9 @@ public class ExecuteStarterUrlsByDataSourceCommandHandler implements ICommandHan
     private final IStarterUrlRepository starterUrlRepository;
 
     private final IProducer producer;
+
+    @Value("${spring.kafka.topic.downloadStarter}")
+    private String downloadStarterTopic;
 
     @Autowired
     public ExecuteStarterUrlsByDataSourceCommandHandler(IDataSourceRepository dataSourceRepository,
@@ -79,11 +83,6 @@ public class ExecuteStarterUrlsByDataSourceCommandHandler implements ICommandHan
     }
 
     private void sendToDownloadStarterUrl(Datasource datasource, Starterurl starterurl) {
-        String topic = getTopic(datasource);
-        producer.send(topic, new DownloadStarterUrlMessage(starterurl.getDataSourceId(), starterurl.getUrl()));
-    }
-
-    private String getTopic(Datasource datasource) {
-        return "download-starter-" + datasource.getId();
+        producer.send(downloadStarterTopic, new DownloadStarterUrlMessage(starterurl.getDataSourceId(), starterurl.getUrl()));
     }
 }

@@ -15,6 +15,14 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
+    topic:
+      extractStarter: extract-starter
+      extractDetail: extract-detail
+      nextStarter: next-starter-url
+      downloadStarter: download-starter
+      downloadDetail: download-detail
+
+
 logging:
   level:
     org:
@@ -29,10 +37,3 @@ eureka:
 
 server:
   port: 8086
-
-kafka:
-  topic:
-    extractStarter01: extract-starter-1
-    extractStarter02: extract-starter-2
-    extractDetail01: extract-detail-1
-    nextStarter01: next-starter-url-1
