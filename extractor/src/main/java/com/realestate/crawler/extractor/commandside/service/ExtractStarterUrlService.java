@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class ExtractStarterUrl01Service {
+public class ExtractStarterUrlService {
     public List<String> extractStarterUrlGetDetailUrls(Starterurl starterUrl) {
         if (Objects.isNull(starterUrl)) {
             throw new IllegalArgumentException("Starter Url is empty");

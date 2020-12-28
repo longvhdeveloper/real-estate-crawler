@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
 @RestController
 @RequestMapping("/v1/admin")
 @Slf4j
@@ -24,10 +27,12 @@ public class StarterUrlsExecutorController {
     }
 
     @PostMapping("/executor")
-    public ResponseEntity<Void> execute(@RequestBody ExecuteStarterUrlsByDataSourceCommand command) {
+    public ResponseEntity<Void> execute(@RequestBody ExecuteStarterUrlsByDataSourceCommand command)
+            throws ExecutionException, InterruptedException {
+
         log.info("execute starter url by data source received {}", command);
 
-        executeStarterUrlsByDataSourceCommandHandler.handler(command);
+        CompletableFuture.runAsync(() -> executeStarterUrlsByDataSourceCommandHandler.handle(command)).get();
 
         return ResponseEntity.ok().build();
     }

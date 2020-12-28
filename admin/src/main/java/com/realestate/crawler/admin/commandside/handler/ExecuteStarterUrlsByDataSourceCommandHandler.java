@@ -37,7 +37,7 @@ public class ExecuteStarterUrlsByDataSourceCommandHandler implements ICommandHan
     }
 
     @Override
-    public boolean handler(ICommand command) {
+    public boolean handle(ICommand command) {
         ExecuteStarterUrlsByDataSourceCommand executeStarterUrlsByDataSourceCommand
                 = (ExecuteStarterUrlsByDataSourceCommand) command;
 

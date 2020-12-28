@@ -36,7 +36,7 @@ public class DownloadTopicDetailUrlCommandHandler implements ICommandHandler {
     }
 
     @Override
-    public boolean handler(ICommand command) {
+    public boolean handle(ICommand command) {
         DownloadDetailUrlCommand downloadDetailUrlCommand = (DownloadDetailUrlCommand) command;
 
         Optional<Detailurl> optional = detailUrlRepository.findByUrl(downloadDetailUrlCommand.getUrl());
