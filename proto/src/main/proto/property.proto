@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package com.realestate.crawler.proto;
+
+import "response.proto";
+
+option java_multiple_files = true;
+option java_package = "com.realestate.crawler.proto";
+
+service PropertyCommandController {
+  rpc create(CreateProperty) returns (Response);
+}
+
+service PropertyQueryController {
+  rpc getList(GetProperties) returns (PropertiesResponse);
+  rpc getByUrl(GetByUrl) returns (PropertyResponse);
+}
+
+message CreateProperty {
+  string name = 1;
+  string price = 2;
+  string area = 3;
+  string address = 4;
+  string description = 5;
+  string url = 6;
+}
+
+message GetProperties {
+
+}
+
+message GetByUrl {
+  string url = 1;
+}
+
+message PropertiesResponse {
+  repeated Property property = 1 ;
+}
+
+message PropertyResponse {
+  Property property = 1;
+}
+
+message Property {
+  int64 id = 1;
+  string name = 2;
+  string price = 3;
+  string area = 4;
+  string address = 5;
+  string description = 6;
+  string url = 7;
+}

@@ -25,7 +25,7 @@ public class StarterUrlRepositoryImpl implements IStarterUrlRepository {
 
     @Override
     public boolean create(CreateStaterUrl createStaterUrl) {
-        log.info("starter url: {}", createStaterUrl);
+        log.info("create starter url: {}", createStaterUrl);
         ManagedChannel channel = getManagedChannel();
 
         StarterUrlCommandControllerGrpc.StarterUrlCommandControllerBlockingStub stub
@@ -45,7 +45,12 @@ public class StarterUrlRepositoryImpl implements IStarterUrlRepository {
 
         StarterUrlQueryControllerGrpc.StarterUrlQueryControllerBlockingStub stub
                 = StarterUrlQueryControllerGrpc.newBlockingStub(channel);
-        return stub.getList(getStaterUrls).getStarterUrlList();
+
+        List<Starterurl> starterUrlList = stub.getList(getStaterUrls).getStarterUrlList();
+
+        channel.shutdown();
+
+        return starterUrlList;
     }
 
     private ManagedChannel getManagedChannel() {

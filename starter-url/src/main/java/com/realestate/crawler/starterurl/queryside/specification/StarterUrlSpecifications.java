@@ -10,9 +10,10 @@ public class StarterUrlSpecifications {
     }
 
     public static Specification<StarterUrl> hasStatus(int status) {
-        return (starterUrl, cq, cb) -> {
-            System.out.println(starterUrl);
-            return cb.equal(starterUrl.get(StarterUrl_.STATUS_CODE), status);
-        };
+        return (starterUrl, cq, cb) -> cb.equal(starterUrl.get(StarterUrl_.STATUS_CODE), status);
+    }
+
+    public static Specification<StarterUrl> hasCheckSumUrl(String checkSumUrl) {
+        return (starterUrl, cq, cb) -> cb.equal(starterUrl.get(StarterUrl_.CHECK_SUM_URL), checkSumUrl);
     }
 }

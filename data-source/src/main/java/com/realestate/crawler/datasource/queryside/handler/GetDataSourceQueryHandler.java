@@ -22,7 +22,7 @@ public class GetDataSourceQueryHandler {
         this.dataSourceQueryRepository = dataSourceQueryRepository;
     }
 
-    public Optional<DataSource> getDataSource(GetDataSourceQuery query) {
+    public Optional<DataSource> handler(GetDataSourceQuery query) {
         return dataSourceQueryRepository.findById(query.getId());
     }
 }

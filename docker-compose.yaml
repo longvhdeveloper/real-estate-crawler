@@ -1,0 +1,226 @@
+version: '3'
+
+# Define services
+services:
+  # database
+  mysql:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_DATABASE: real_estate_crawler
+      MYSQL_USER: db_wr
+      MYSQL_PASSWORD: 1q2w3e4r
+      MYSQL_ROOT_PASSWORD: 1q2w3e4r
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - backend
+
+  # zookeeper
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    ports:
+      - "2181:2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - backend
+
+  # Kafka
+  kafka:
+    image: bitnami/kafka:latest
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
+      - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
+    depends_on:
+      - zookeeper
+    networks:
+      - backend
+
+  # eureka service
+  eureka-service:
+    # Configuration for building the docker image
+    build:
+      context: eureka-server
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    restart: always
+    networks:
+      - backend
+
+  data-source-service:
+    # Configuration for building the docker image
+    build:
+      context: data-source
+      dockerfile: Dockerfile
+    ports:
+      - "6565:6565"
+    restart: always
+    environment: # Pass environment variables to the service
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/real_estate_crawler?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+      SPRING_DATASOURCE_USERNAME: db_wr
+      SPRING_DATASOURCE_PASSWORD: 1q2w3e4r
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
+      EUREKA_CLIENT_INSTANCE_NONSECUREPORT: 6565
+      GRPC_PORT: 6565
+    depends_on:
+      - mysql
+      - eureka-service
+      - kafka
+    networks:
+      - backend
+
+  starter-url-service:
+    # Configuration for building the docker image
+    build:
+      context: starter-url
+      dockerfile: Dockerfile
+    ports:
+      - "6566:6566"
+    restart: always
+    environment: # Pass environment variables to the service
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/real_estate_crawler?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+      SPRING_DATASOURCE_USERNAME: db_wr
+      SPRING_DATASOURCE_PASSWORD: 1q2w3e4r
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
+      EUREKA_CLIENT_INSTANCE_NONSECUREPORT: 6566
+      GRPC_PORT: 6566
+    depends_on:
+      - mysql
+      - eureka-service
+      - kafka
+    networks:
+      - backend
+
+  detail-url-service:
+    # Configuration for building the docker image
+    build:
+      context: detail-url
+      dockerfile: Dockerfile
+    ports:
+      - "6567:6567"
+    restart: always
+    environment: # Pass environment variables to the service
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/real_estate_crawler?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+      SPRING_DATASOURCE_USERNAME: db_wr
+      SPRING_DATASOURCE_PASSWORD: 1q2w3e4r
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
+      EUREKA_CLIENT_INSTANCE_NONSECUREPORT: 6566
+      GRPC_PORT: 6567
+    depends_on:
+      - mysql
+      - eureka-service
+      - kafka
+    networks:
+      - backend
+
+  property-service:
+    # Configuration for building the docker image
+    build:
+      context: property
+      dockerfile: Dockerfile
+    ports:
+      - "6568:6568"
+    restart: always
+    environment: # Pass environment variables to the service
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/real_estate_crawler?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+      SPRING_DATASOURCE_USERNAME: db_wr
+      SPRING_DATASOURCE_PASSWORD: 1q2w3e4r
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
+      EUREKA_CLIENT_INSTANCE_NONSECUREPORT: 6566
+      GRPC_PORT: 6568
+    depends_on:
+      - mysql
+      - eureka-service
+      - kafka
+    networks:
+      - backend
+
+  admin-service:
+    # Configuration for building the docker image
+    build:
+      context: admin
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+    restart: always
+    environment: # Pass environment variables to the service
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/real_estate_crawler?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+      SPRING_DATASOURCE_USERNAME: db_wr
+      SPRING_DATASOURCE_PASSWORD: 1q2w3e4r
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
+      EUREKA_CLIENT_INSTANCE_NONSECUREPORT: 6566
+      SERVER_PORT: 8083
+      SPRING_KAFKA_PRODUCER_BOOTSTRAP-SERVERS: kafka:9092
+    depends_on:
+      - mysql
+      - eureka-service
+      - kafka
+    networks:
+      - backend
+
+  downloader-service:
+    # Configuration for building the docker image
+    build:
+      context: downloader
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8084"
+    restart: always
+    environment: # Pass environment variables to the service
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/real_estate_crawler?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+      SPRING_DATASOURCE_USERNAME: db_wr
+      SPRING_DATASOURCE_PASSWORD: 1q2w3e4r
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
+      EUREKA_CLIENT_INSTANCE_NONSECUREPORT: 6566
+      SERVER_PORT: 8084
+      SPRING_KAFKA_PRODUCER_BOOTSTRAP-SERVERS: kafka:9092
+      SPRING_KAFKA_CONSUMER_BOOTSTRAP-SERVERS: kafka:9092
+    depends_on:
+      - mysql
+      - eureka-service
+      - kafka
+    networks:
+      - backend
+
+  extractor-service:
+    # Configuration for building the docker image
+    build:
+      context: extractor
+      dockerfile: Dockerfile
+    ports:
+      - "8086:8086"
+    restart: always
+    environment: # Pass environment variables to the service
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/real_estate_crawler?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+      SPRING_DATASOURCE_USERNAME: db_wr
+      SPRING_DATASOURCE_PASSWORD: 1q2w3e4r
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka
+      EUREKA_CLIENT_INSTANCE_NONSECUREPORT: 6566
+      SERVER_PORT: 8084
+      SPRING_KAFKA_PRODUCER_BOOTSTRAP-SERVERS: kafka:9092
+      SPRING_KAFKA_CONSUMER_BOOTSTRAP-SERVERS: kafka:9092
+    depends_on:
+      - mysql
+      - eureka-service
+      - kafka
+    networks:
+      - backend
+
+# Volumes
+volumes:
+  db-data:
+networks:
+  backend:
+    driver: bridge

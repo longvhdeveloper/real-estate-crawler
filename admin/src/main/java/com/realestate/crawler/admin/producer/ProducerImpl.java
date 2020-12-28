@@ -1,6 +1,6 @@
 package com.realestate.crawler.admin.producer;
 
-import com.realestate.crawler.admin.commandside.message.AbstractMessage;
+import com.realestate.crawler.admin.message.AbstractMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;

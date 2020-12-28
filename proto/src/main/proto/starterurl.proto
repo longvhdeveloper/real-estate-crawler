@@ -14,6 +14,7 @@ service StarterUrlCommandController {
 
 service StarterUrlQueryController {
   rpc Get(GetStaterUrl) returns (StarterUrlResponse);
+  rpc GetByUrl(GetStarterUrlByUrl) returns (StarterUrlResponse);
   rpc GetList(GetStaterUrls) returns (StarterUrlListResponse);
 }
 
@@ -29,6 +30,11 @@ message UpdateHtmlContentStarterUrl {
 
 message GetStaterUrl {
   int64 id = 1;
+}
+
+message GetStarterUrlByUrl {
+  int64 dataSourceId = 1;
+  string url = 2;
 }
 
 message Url {

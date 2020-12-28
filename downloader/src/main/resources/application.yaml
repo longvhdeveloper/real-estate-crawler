@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: downloader-service
+
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: stater_group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+    topic:
+      downloadStarter: download-starter
+      downloadDetail: download-detail
+      extractStarter: extract-starter
+      extractDetail: extract-detail
+
+logging:
+  level:
+    org:
+      springframework: error
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+    instance:
+      preferIpAddress: true
+
+server:
+  port: 8084

@@ -1,4 +1,4 @@
-package com.realestate.crawler.admin.commandside.message;
+package com.realestate.crawler.downloader.message;
 
 import lombok.Getter;
 

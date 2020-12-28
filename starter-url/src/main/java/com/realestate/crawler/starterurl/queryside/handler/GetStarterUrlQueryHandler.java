@@ -3,17 +3,15 @@ package com.realestate.crawler.starterurl.queryside.handler;
 import com.realestate.crawler.starterurl.entity.StarterUrl;
 import com.realestate.crawler.starterurl.queryside.query.GetStaterUrlQuery;
 import com.realestate.crawler.starterurl.queryside.repository.StarterUrlQueryRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
+@Slf4j
 public class GetStarterUrlQueryHandler {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     private final StarterUrlQueryRepository starterUrlQueryRepository;
 
     @Autowired

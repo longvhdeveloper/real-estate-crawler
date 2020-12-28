@@ -1,6 +1,6 @@
 package com.realestate.crawler.admin.configuration;
 
-import com.realestate.crawler.admin.commandside.message.AbstractMessage;
+import com.realestate.crawler.admin.message.AbstractMessage;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +34,7 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public ProducerFactory<String, AbstractMessage> starterUrlProducerFactory() {
+    public ProducerFactory<String, AbstractMessage> crawlerProducerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -43,7 +43,7 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, AbstractMessage> starterUrlKafkaTemplate() {
-        return new KafkaTemplate<>(starterUrlProducerFactory());
+    public KafkaTemplate<String, AbstractMessage> crawlerKafkaTemplate() {
+        return new KafkaTemplate<>(crawlerProducerFactory());
     }
 }

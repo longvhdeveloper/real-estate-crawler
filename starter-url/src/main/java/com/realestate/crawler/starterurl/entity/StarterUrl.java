@@ -4,6 +4,7 @@ import com.google.common.hash.Hashing;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -17,6 +18,7 @@ import java.util.Objects;
         @Index(name = "idx_check_sum_url", unique = true, columnList = "check_sum_url")
 })
 @NoArgsConstructor
+@Slf4j
 public class StarterUrl {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -87,8 +89,22 @@ public class StarterUrl {
             throw new IllegalArgumentException("HTML content is empty");
         }
 
+        if (isDuplicateHtmlContent(htmlContent)) {
+            log.warn("HTML content of url {} is duplicate", this.url);
+            return;
+        }
+
         this.htmlContent = htmlContent;
         this.checkSumHtmlContent = Hashing.sha256().hashString(this.htmlContent, StandardCharsets.UTF_8).toString();
+    }
+
+    public static String createCheckSumUrl(String url) {
+        return Hashing.sha256().hashString(url, StandardCharsets.UTF_8).toString();
+    }
+
+    public boolean isDuplicateHtmlContent(String html) {
+        String checkSumHtmlContent = Hashing.sha256().hashString(html, StandardCharsets.UTF_8).toString();
+        return checkSumHtmlContent.equals(this.checkSumHtmlContent);
     }
 
     @PostLoad

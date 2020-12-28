@@ -59,6 +59,21 @@ public class DetailUrl {
     @Column(name = "updated_date")
     private Date updatedDate;
 
+    public DetailUrl(String url, long dataSourceId) {
+        if (url.isEmpty()) {
+            throw new IllegalArgumentException("Starter URL is empty");
+        }
+
+        if (dataSourceId <= 0) {
+            throw new IllegalArgumentException("Data source of starter url is null");
+        }
+
+        this.url = url;
+        this.dataSourceId = dataSourceId;
+        this.checkSumUrl = Hashing.sha256().hashString(this.url, StandardCharsets.UTF_8).toString();
+        this.status = Status.ENABLED;
+    }
+
     public DetailUrl(String url, String htmlContent, long dataSourceId) {
 
         if (url.isEmpty()) {
@@ -79,6 +94,13 @@ public class DetailUrl {
         this.checkSumHtmlContent = Hashing.sha256().hashString(this.htmlContent, StandardCharsets.UTF_8).toString();
         this.dataSourceId = dataSourceId;
         this.status = Status.ENABLED;
+    }
+
+    public static String createCheckSumUrl(String url) {
+        if (url.isEmpty()) {
+            return "";
+        }
+        return Hashing.sha256().hashString(url, StandardCharsets.UTF_8).toString();
     }
 
     public boolean isEnabled() {

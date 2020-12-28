@@ -2,14 +2,15 @@ package com.realestate.crawler.starterurl.queryside.controller;
 
 import com.realestate.crawler.proto.*;
 import com.realestate.crawler.starterurl.entity.StarterUrl;
+import com.realestate.crawler.starterurl.queryside.handler.GetStarterUrlByUrlQueryHandler;
 import com.realestate.crawler.starterurl.queryside.handler.GetStarterUrlQueryHandler;
 import com.realestate.crawler.starterurl.queryside.handler.GetStarterUrlsQueryHandler;
+import com.realestate.crawler.starterurl.queryside.query.GetStarterUrlByUrlQuery;
 import com.realestate.crawler.starterurl.queryside.query.GetStarterUrlsQuery;
 import com.realestate.crawler.starterurl.queryside.query.GetStaterUrlQuery;
 import io.grpc.stub.StreamObserver;
+import lombok.extern.slf4j.Slf4j;
 import org.lognet.springboot.grpc.GRpcService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -20,30 +21,32 @@ import java.util.stream.Collectors;
 
 @GRpcService
 @RequestMapping("/")
+@Slf4j
 public class StarterUrlQueryController extends StarterUrlQueryControllerGrpc.StarterUrlQueryControllerImplBase {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final GetStarterUrlQueryHandler getStarterUrlQueryHandler;
     private final GetStarterUrlsQueryHandler getStarterUrlsQueryHandler;
+    private final GetStarterUrlByUrlQueryHandler getStarterUrlByUrlQueryHandler;
 
     @Autowired
     public StarterUrlQueryController(GetStarterUrlQueryHandler getStarterUrlQueryHandler,
-                                     GetStarterUrlsQueryHandler getStarterUrlsQueryHandler) {
+                                     GetStarterUrlsQueryHandler getStarterUrlsQueryHandler,
+                                     GetStarterUrlByUrlQueryHandler getStarterUrlByUrlQueryHandler) {
         this.getStarterUrlQueryHandler = getStarterUrlQueryHandler;
         this.getStarterUrlsQueryHandler = getStarterUrlsQueryHandler;
+        this.getStarterUrlByUrlQueryHandler = getStarterUrlByUrlQueryHandler;
     }
 
     @Override
     public void get(GetStaterUrl request, StreamObserver<StarterUrlResponse> responseObserver) {
 
-        logger.info("stater url request get {}", request);
+        log.info("stater url request get {}", request);
 
         Optional<StarterUrl> optional = getStarterUrlQueryHandler.handler(GetStaterUrlQuery.builder().id(request.getId()).build());
 
         if (optional.isEmpty()) {
             StarterUrlResponse response = StarterUrlResponse.newBuilder().build();
-            logger.info("server responded {}", response);
+            log.info("server responded {}", response);
             responseObserver.onNext(response);
             responseObserver.onCompleted();
             return;
@@ -59,14 +62,14 @@ public class StarterUrlQueryController extends StarterUrlQueryControllerGrpc.Sta
                 .setCheckSumHtmlContent(Objects.toString(starterUrl.getCheckSumHtmlContent(), ""))
                 .setStatus(starterUrl.getStatus().getStatus())
                 .build()).build();
-        logger.info("server responded {}", response);
+        log.info("server responded {}", response.getStarterUrl().getUrl());
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
     @Override
     public void getList(GetStaterUrls request, StreamObserver<StarterUrlListResponse> responseObserver) {
-        logger.info("stater url request get {}", request);
+        log.info("stater url request get {}", request);
 
         List<StarterUrl> starterUrls = getStarterUrlsQueryHandler.getStarterUrls(GetStarterUrlsQuery.builder().
                 dataSourceId(request.getDataSourceId())
@@ -82,7 +85,38 @@ public class StarterUrlQueryController extends StarterUrlQueryControllerGrpc.Sta
                         .setStatus(starterUrl.getStatus().getStatus()).build()).collect(Collectors.toList()))
                 .build();
 
-        logger.info("server responded {}", response);
+        log.info("server responded number of starter url {}", response.getStarterUrlCount());
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getByUrl(GetStarterUrlByUrl request, StreamObserver<StarterUrlResponse> responseObserver) {
+        log.info("stater url request get {}", request);
+
+        StarterUrl starterUrl = getStarterUrlByUrlQueryHandler.getStarterUrlByUrl(GetStarterUrlByUrlQuery.builder()
+                .dataSourceId(request.getDataSourceId())
+                .url(request.getUrl())
+                .build());
+
+        if (Objects.isNull(starterUrl)) {
+            StarterUrlResponse response = StarterUrlResponse.newBuilder().build();
+            log.info("server responded {}", response);
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+            return;
+        }
+
+        StarterUrlResponse response = StarterUrlResponse.newBuilder().setStarterUrl(Starterurl.newBuilder()
+                .setId(starterUrl.getId())
+                .setDataSourceId(starterUrl.getDataSourceId())
+                .setUrl(Objects.toString(starterUrl.getUrl(), ""))
+                .setCheckSumUrl(Objects.toString(starterUrl.getCheckSumUrl(), ""))
+                .setHtmlContent(Objects.toString(starterUrl.getHtmlContent(), ""))
+                .setCheckSumHtmlContent(Objects.toString(starterUrl.getCheckSumHtmlContent(), ""))
+                .setStatus(starterUrl.getStatus().getStatus())
+                .build()).build();
+        log.info("server responded {}", response.getStarterUrl().getUrl());
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
