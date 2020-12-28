@@ -1,4 +1,4 @@
-Name: Continuous Integration Real Estate Crawler
+name: Continuous Integration Real Estate Crawler
 
 on: [ push, pull_request ]
 
