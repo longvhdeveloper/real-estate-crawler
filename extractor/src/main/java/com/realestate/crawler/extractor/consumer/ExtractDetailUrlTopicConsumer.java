@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
 @Component
 @Slf4j
 public class ExtractDetailUrlTopicConsumer {
@@ -21,9 +24,9 @@ public class ExtractDetailUrlTopicConsumer {
 
     @KafkaListener(topics = "${spring.kafka.topic.extractDetail}",
             containerFactory = "extractDetailUrlKafkaListenerContainerFactory")
-    public void listen(ExtractDetailUrlMessage message) {
+    public void listen(ExtractDetailUrlMessage message) throws ExecutionException, InterruptedException {
 
         log.info("Received download detail url message: {}", message);
-        commandHandler.handler(ExtractDetailUrlCommand.builder().id(message.getId()).build());
+        CompletableFuture.runAsync(() -> commandHandler.handle(ExtractDetailUrlCommand.builder().id(message.getId()).build())).get();
     }
 }

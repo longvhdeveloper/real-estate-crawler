@@ -17,7 +17,7 @@ public class CreateDataSourceCommandHandler implements ICommandHandler {
     }
 
     @Override
-    public boolean handler(ICommand command) {
+    public boolean handle(ICommand command) {
         CreateDataSourceCommand createDataSourceCommand = (CreateDataSourceCommand) command;
         return dataSourceRepository.create(CreateDatasource.newBuilder()
                 .setName(createDataSourceCommand.getName())

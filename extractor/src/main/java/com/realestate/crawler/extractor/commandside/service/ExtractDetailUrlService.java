@@ -8,7 +8,7 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ExtractDetailUrl01Service {
+public class ExtractDetailUrlService {
 
     private Document document;
 

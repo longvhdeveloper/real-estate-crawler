@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
 @RestController
 @RequestMapping("/v1/admin")
 @Slf4j
@@ -24,9 +27,12 @@ public class StarterUrlCommandController {
     }
 
     @PostMapping("/starter-url")
-    public ResponseEntity<Void> create(@RequestBody CreateStarterUrlCommand command) {
+    public ResponseEntity<Void> create(@RequestBody CreateStarterUrlCommand command)
+            throws ExecutionException, InterruptedException {
+
         log.info("create starter url received {}", command);
-        if (!createStarterUrlCommandHandler.handler(command)) {
+        CompletableFuture<Boolean> future = CompletableFuture.completedFuture(createStarterUrlCommandHandler.handle(command));
+        if (!future.get()) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
         return ResponseEntity.ok().build();

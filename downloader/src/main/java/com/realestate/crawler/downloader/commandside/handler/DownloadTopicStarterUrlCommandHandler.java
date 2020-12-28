@@ -44,7 +44,7 @@ public class DownloadTopicStarterUrlCommandHandler implements ICommandHandler {
     }
 
     @Override
-    public boolean handler(ICommand command) {
+    public boolean handle(ICommand command) {
         DownloadStarterUrlCommand downloadStarterUrlCommand = (DownloadStarterUrlCommand) command;
 
         Datasource datasource = dataSourceRepository.get(downloadStarterUrlCommand.getDataSourceId()).orElseThrow(

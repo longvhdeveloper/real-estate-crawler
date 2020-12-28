@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
 @RestController
 @RequestMapping("/v1/admin")
 public class DataSourceCommandController {
@@ -25,9 +28,12 @@ public class DataSourceCommandController {
     }
 
     @PostMapping("/data-source")
-    public ResponseEntity<Void> create(@RequestBody CreateDataSourceCommand command) {
+    public ResponseEntity<Void> create(@RequestBody CreateDataSourceCommand command)
+            throws ExecutionException, InterruptedException {
+
         logger.info("create data source received {}", command);
-        if (!createDataSourceCommandHandler.handler(command)) {
+        CompletableFuture<Boolean> future = CompletableFuture.completedFuture(createDataSourceCommandHandler.handle(command));
+        if (!future.get()) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
         return ResponseEntity.ok().build();

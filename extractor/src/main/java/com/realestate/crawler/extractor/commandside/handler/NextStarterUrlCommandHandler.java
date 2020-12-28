@@ -3,7 +3,7 @@ package com.realestate.crawler.extractor.commandside.handler;
 import com.realestate.crawler.extractor.commandside.command.GetNextStarterUrlCommand;
 import com.realestate.crawler.extractor.commandside.command.ICommand;
 import com.realestate.crawler.extractor.commandside.repository.StarterUrlCommandRepository;
-import com.realestate.crawler.extractor.commandside.service.ExtractStarterUrl01Service;
+import com.realestate.crawler.extractor.commandside.service.ExtractStarterUrlService;
 import com.realestate.crawler.extractor.message.DownloadStarterUrlMessage;
 import com.realestate.crawler.extractor.producer.IProducer;
 import com.realestate.crawler.proto.CreateStaterUrl;
@@ -19,23 +19,23 @@ import org.springframework.stereotype.Component;
 public class NextStarterUrlCommandHandler implements ICommandHandler {
 
     private final StarterUrlCommandRepository starterUrlRepository;
-    private final ExtractStarterUrl01Service extractStarterUrl01Service;
-    private IProducer producer;
+    private final ExtractStarterUrlService extractStarterUrlService;
+    private final IProducer producer;
 
     @Value("${spring.kafka.topic.downloadStarter}")
     private String downloadStarterTopic;
 
     @Autowired
     public NextStarterUrlCommandHandler(StarterUrlCommandRepository starterUrlRepository,
-                                        ExtractStarterUrl01Service extractStarterUrl01Service,
+                                        ExtractStarterUrlService extractStarterUrlService,
                                         IProducer producer) {
         this.starterUrlRepository = starterUrlRepository;
-        this.extractStarterUrl01Service = extractStarterUrl01Service;
+        this.extractStarterUrlService = extractStarterUrlService;
         this.producer = producer;
     }
 
     @Override
-    public boolean handler(ICommand command) {
+    public boolean handle(ICommand command) {
 
         GetNextStarterUrlCommand getNextStarterUrlCommand = (GetNextStarterUrlCommand) command;
 
@@ -47,12 +47,12 @@ public class NextStarterUrlCommandHandler implements ICommandHandler {
             return false;
         }
 
-        int currentPageNumber = extractStarterUrl01Service.getCurrentPageNumber(starterUrl);
+        int currentPageNumber = extractStarterUrlService.getCurrentPageNumber(starterUrl);
 
         log.info("===== CURRENT PAGE: {}", currentPageNumber);
 
         // TODO to keep test small data
-        int limit = 3;
+        int limit = 5;
         if (currentPageNumber > 0 && currentPageNumber < limit) {
             String nextStarterUrl = starterUrl.getUrl().replace("/p" + currentPageNumber, "");
             int nextPageNumber = currentPageNumber + 1;

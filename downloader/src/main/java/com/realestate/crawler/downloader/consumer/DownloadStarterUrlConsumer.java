@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
 @Component
 @Slf4j
 public class DownloadStarterUrlConsumer {
@@ -21,12 +24,13 @@ public class DownloadStarterUrlConsumer {
 
     @KafkaListener(topics = "${spring.kafka.topic.downloadStarter}",
             containerFactory = "downloadStarterUrlKafkaListenerContainerFactory")
-    public void listen(DownloadStarterUrlMessage message) {
+    public void listen(DownloadStarterUrlMessage message) throws ExecutionException, InterruptedException {
 
         log.info("Received download starter url message: {}", message);
-        handler.handler(DownloadStarterUrlCommand.builder()
+
+        CompletableFuture.runAsync(() -> handler.handle(DownloadStarterUrlCommand.builder()
                 .dataSourceId(message.getDatasourceId())
                 .url(message.getStarterUrl())
-                .build());
+                .build())).get();
     }
 }

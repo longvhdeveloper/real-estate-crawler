@@ -5,7 +5,7 @@ import com.realestate.crawler.extractor.commandside.command.ICommand;
 import com.realestate.crawler.extractor.commandside.repository.DataSourceCommandRepository;
 import com.realestate.crawler.extractor.commandside.repository.DetailUrlCommandRepository;
 import com.realestate.crawler.extractor.commandside.repository.StarterUrlCommandRepository;
-import com.realestate.crawler.extractor.commandside.service.ExtractStarterUrl01Service;
+import com.realestate.crawler.extractor.commandside.service.ExtractStarterUrlService;
 import com.realestate.crawler.extractor.message.DownloadDetailUrlMessage;
 import com.realestate.crawler.extractor.message.NextStarterUrlMessage;
 import com.realestate.crawler.extractor.producer.IProducer;
@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 @Slf4j
@@ -28,7 +29,7 @@ public class ExtractStarterUrlCommandHandler implements ICommandHandler {
     private final StarterUrlCommandRepository starterUrlRepository;
     private final DataSourceCommandRepository dataSourceRepository;
     private final DetailUrlCommandRepository detailUrlRepository;
-    private final ExtractStarterUrl01Service extractStarterUrl01Service;
+    private final ExtractStarterUrlService extractStarterUrlService;
     private IProducer producer;
 
     @Value("${spring.kafka.topic.downloadDetail}")
@@ -41,49 +42,60 @@ public class ExtractStarterUrlCommandHandler implements ICommandHandler {
     public ExtractStarterUrlCommandHandler(StarterUrlCommandRepository starterUrlRepository,
                                            DataSourceCommandRepository dataSourceRepository,
                                            DetailUrlCommandRepository detailUrlRepository,
-                                           ExtractStarterUrl01Service extractStarterUrl01Service,
+                                           ExtractStarterUrlService extractStarterUrlService,
                                            IProducer producer) {
         this.starterUrlRepository = starterUrlRepository;
         this.dataSourceRepository = dataSourceRepository;
         this.detailUrlRepository = detailUrlRepository;
-        this.extractStarterUrl01Service = extractStarterUrl01Service;
+        this.extractStarterUrlService = extractStarterUrlService;
         this.producer = producer;
     }
 
     @Override
-    public boolean handler(ICommand command) {
-        ExtractStarterUrlCommand extractStarterUrlCommand = (ExtractStarterUrlCommand) command;
+    public boolean handle(ICommand command) {
+        try {
+            ExtractStarterUrlCommand extractStarterUrlCommand = (ExtractStarterUrlCommand) command;
 
-        Starterurl starterUrl = starterUrlRepository.findById(extractStarterUrlCommand.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Starter url with id " + extractStarterUrlCommand.getId() + " is not exist."));
+            Starterurl starterUrl = starterUrlRepository.findById(extractStarterUrlCommand.getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Starter url with id " + extractStarterUrlCommand.getId() + " is not exist."));
 
-        if (!isStarterUrlEnabled(starterUrl)) {
-            log.warn("Starter URL {} is disabled", starterUrl.getUrl());
-            return false;
+            if (!isStarterUrlEnabled(starterUrl)) {
+                log.warn("Starter URL {} is disabled", starterUrl.getUrl());
+                return false;
+            }
+
+            if (isStarterUrlHtmlContentEmpty(starterUrl)) {
+                log.warn("Starter URL {} is empty html", starterUrl.getUrl());
+                return false;
+            }
+            CompletableFuture.runAsync(() -> processStarterUrl(starterUrl)).get();
+            CompletableFuture.runAsync(() -> sendToNextStarterUrl(starterUrl)).get();
+
+            return true;
+        } catch (Exception e) {
+            log.error(e.getMessage());
         }
 
-        if (isStarterUrlHtmlContentEmpty(starterUrl)) {
-            log.warn("Starter URL {} is empty html", starterUrl.getUrl());
-            return false;
-        }
-        processStarterUrl(starterUrl);
-        sendToNextStarterUrl(starterUrl);
-
-        return true;
+        return false;
     }
 
     private void processStarterUrl(Starterurl starterUrl) {
-        List<String> urlGetDetailUrls = extractStarterUrl01Service.extractStarterUrlGetDetailUrls(starterUrl);
+        try {
+            List<String> urlGetDetailUrls = extractStarterUrlService.extractStarterUrlGetDetailUrls(starterUrl);
 
-        Datasource datasource = dataSourceRepository.get(starterUrl.getDataSourceId()).orElseThrow(
-                () -> new IllegalArgumentException("Data source with id " + starterUrl.getDataSourceId() + " is not exist"));
+            Datasource datasource = dataSourceRepository.get(starterUrl.getDataSourceId()).orElseThrow(
+                    () -> new IllegalArgumentException("Data source with id " + starterUrl.getDataSourceId() + " is not exist"));
 
-        for (String detailUrlString : urlGetDetailUrls) {
-            if (detailUrlString.startsWith("/")) {
-                detailUrlString = datasource.getUrl().concat(detailUrlString);
+            for (String detailUrlString : urlGetDetailUrls) {
+                if (detailUrlString.startsWith("/")) {
+                    detailUrlString = datasource.getUrl().concat(detailUrlString);
+                }
+
+                String finalDetailUrlString = detailUrlString;
+                CompletableFuture.runAsync(() -> processDetailUrl(starterUrl, finalDetailUrlString)).get();
             }
-
-            processDetailUrl(starterUrl, detailUrlString);
+        } catch (Exception e) {
+            log.error(e.getMessage());
         }
     }
 

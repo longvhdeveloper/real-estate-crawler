@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
 @Component
 @Slf4j
 public class NextStarterUrlTopicConsumer {
@@ -21,10 +24,10 @@ public class NextStarterUrlTopicConsumer {
 
     @KafkaListener(topics = "${spring.kafka.topic.nextStarter}",
             containerFactory = "nextStarterUrlKafkaListenerContainerFactory")
-    public void listen(NextStarterUrlMessage message) {
+    public void listen(NextStarterUrlMessage message) throws ExecutionException, InterruptedException {
 
         log.info("Next starter url message: {}", message);
 
-        handler.handler(GetNextStarterUrlCommand.builder().id(message.getId()).build());
+        CompletableFuture.runAsync(() -> handler.handle(GetNextStarterUrlCommand.builder().id(message.getId()).build())).get();
     }
 }

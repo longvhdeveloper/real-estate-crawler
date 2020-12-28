@@ -4,5 +4,5 @@ import com.realestate.crawler.admin.commandside.command.ICommand;
 
 public interface ICommandHandler {
 
-    boolean handler(ICommand command);
+    boolean handle(ICommand command);
 }

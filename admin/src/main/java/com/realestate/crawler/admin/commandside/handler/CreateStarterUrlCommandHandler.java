@@ -23,7 +23,7 @@ public class CreateStarterUrlCommandHandler implements ICommandHandler {
     }
 
     @Override
-    public boolean handler(ICommand command) {
+    public boolean handle(ICommand command) {
         CreateStarterUrlCommand createStarterUrlCommand = (CreateStarterUrlCommand) command;
         return starterUrlRepository.create(CreateStaterUrl.newBuilder()
                 .setDataSourceId(createStarterUrlCommand.getDataSourceId())
