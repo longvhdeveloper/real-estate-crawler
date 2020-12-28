@@ -78,6 +78,10 @@ After run execute starter url, please access Database to check result of crawler
 
 ### Continue...
 
-* Implement get property API
-* Implement retry to using dead letter queue Kafka
-* Limit rate download 
+- [ ] Implement get property API
+- [ ] Implement get data source API
+- [ ] Implement get starter url API
+- [ ] Implement get url API  
+- [ ] Implement retry to using dead letter queue Kafka
+- [ ] Implement Limit rate download
+- [ ] Implement parse multi data source website
