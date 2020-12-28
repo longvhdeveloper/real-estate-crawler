@@ -2,7 +2,7 @@ package com.realestate.crawler.extractor.commandside.repository.grpc;
 
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
-import com.realestate.crawler.extractor.commandside.repository.IPropertyRepository;
+import com.realestate.crawler.extractor.commandside.repository.PropertyCommandRepository;
 import com.realestate.crawler.proto.CreateProperty;
 import com.realestate.crawler.proto.PropertyCommandControllerGrpc;
 import com.realestate.crawler.proto.Response;
@@ -14,12 +14,12 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @Slf4j
-public class PropertyRepositoryImpl implements IPropertyRepository {
+public class PropertyCommandRepositoryImpl implements PropertyCommandRepository {
 
     private final EurekaClient client;
 
     @Autowired
-    public PropertyRepositoryImpl(EurekaClient client) {
+    public PropertyCommandRepositoryImpl(EurekaClient client) {
         this.client = client;
     }
 

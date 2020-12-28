@@ -2,8 +2,8 @@ package com.realestate.crawler.extractor.commandside.handler;
 
 import com.realestate.crawler.extractor.commandside.command.ExtractDetailUrlCommand;
 import com.realestate.crawler.extractor.commandside.command.ICommand;
-import com.realestate.crawler.extractor.commandside.repository.IDetailUrlRepository;
-import com.realestate.crawler.extractor.commandside.repository.IPropertyRepository;
+import com.realestate.crawler.extractor.commandside.repository.DetailUrlCommandRepository;
+import com.realestate.crawler.extractor.commandside.repository.PropertyCommandRepository;
 import com.realestate.crawler.extractor.commandside.service.ExtractDetailUrl01Service;
 import com.realestate.crawler.extractor.entity.PropertyParseItem;
 import com.realestate.crawler.proto.CreateProperty;
@@ -16,13 +16,13 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class ExtractDetailUrlCommandHandler implements ICommandHandler {
 
-    private final IPropertyRepository propertyRepository;
-    private final IDetailUrlRepository detailUrlRepository;
+    private final PropertyCommandRepository propertyRepository;
+    private final DetailUrlCommandRepository detailUrlRepository;
     private final ExtractDetailUrl01Service extractDetailUrl01Service;
 
     @Autowired
-    public ExtractDetailUrlCommandHandler(IPropertyRepository propertyRepository,
-                                          IDetailUrlRepository detailUrlRepository,
+    public ExtractDetailUrlCommandHandler(PropertyCommandRepository propertyRepository,
+                                          DetailUrlCommandRepository detailUrlRepository,
                                           ExtractDetailUrl01Service extractDetailUrl01Service) {
         this.propertyRepository = propertyRepository;
         this.detailUrlRepository = detailUrlRepository;

@@ -2,7 +2,7 @@ package com.realestate.crawler.downloader.commandside.repository.grpc;
 
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
-import com.realestate.crawler.downloader.commandside.repository.IDataSourceRepository;
+import com.realestate.crawler.downloader.commandside.repository.DataSourceCommandRepository;
 import com.realestate.crawler.proto.DataSourceQueryControllerGrpc;
 import com.realestate.crawler.proto.Datasource;
 import com.realestate.crawler.proto.DatasourceResponse;
@@ -17,11 +17,11 @@ import java.util.Optional;
 
 @Repository
 @Slf4j
-public class DataSourceRepositoryImpl implements IDataSourceRepository {
+public class DataSourceCommandRepositoryImpl implements DataSourceCommandRepository {
     private final EurekaClient client;
 
     @Autowired
-    public DataSourceRepositoryImpl(EurekaClient client) {
+    public DataSourceCommandRepositoryImpl(EurekaClient client) {
         this.client = client;
     }
 

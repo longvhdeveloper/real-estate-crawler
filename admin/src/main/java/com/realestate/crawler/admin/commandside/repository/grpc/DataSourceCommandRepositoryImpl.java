@@ -1,12 +1,9 @@
-package com.realestate.crawler.extractor.commandside.repository.grpc;
+package com.realestate.crawler.admin.commandside.repository.grpc;
 
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
-import com.realestate.crawler.extractor.commandside.repository.IDataSourceRepository;
-import com.realestate.crawler.proto.DataSourceQueryControllerGrpc;
-import com.realestate.crawler.proto.Datasource;
-import com.realestate.crawler.proto.DatasourceResponse;
-import com.realestate.crawler.proto.GetDatasource;
+import com.realestate.crawler.admin.commandside.repository.DataSourceCommandRepository;
+import com.realestate.crawler.proto.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -17,12 +14,26 @@ import java.util.Optional;
 
 @Repository
 @Slf4j
-public class DataSourceRepositoryImpl implements IDataSourceRepository {
+public class DataSourceCommandRepositoryImpl implements DataSourceCommandRepository {
     private final EurekaClient client;
 
     @Autowired
-    public DataSourceRepositoryImpl(EurekaClient client) {
+    public DataSourceCommandRepositoryImpl(EurekaClient client) {
         this.client = client;
+    }
+
+    @Override
+    public boolean create(CreateDatasource createDatasource) {
+        log.info("data source: {}", createDatasource);
+        final ManagedChannel channel = getManagedChannel();
+
+        DataSourceCommandControllerGrpc.DataSourceCommandControllerBlockingStub stub
+                = DataSourceCommandControllerGrpc.newBlockingStub(channel);
+        Response response = stub.create(createDatasource);
+
+        channel.shutdown();
+
+        return response.getStatus() == 1;
     }
 
     @Override

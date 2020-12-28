@@ -2,9 +2,9 @@ package com.realestate.crawler.extractor.commandside.handler;
 
 import com.realestate.crawler.extractor.commandside.command.ExtractStarterUrlCommand;
 import com.realestate.crawler.extractor.commandside.command.ICommand;
-import com.realestate.crawler.extractor.commandside.repository.IDataSourceRepository;
-import com.realestate.crawler.extractor.commandside.repository.IDetailUrlRepository;
-import com.realestate.crawler.extractor.commandside.repository.IStarterUrlRepository;
+import com.realestate.crawler.extractor.commandside.repository.DataSourceCommandRepository;
+import com.realestate.crawler.extractor.commandside.repository.DetailUrlCommandRepository;
+import com.realestate.crawler.extractor.commandside.repository.StarterUrlCommandRepository;
 import com.realestate.crawler.extractor.commandside.service.ExtractStarterUrl01Service;
 import com.realestate.crawler.extractor.message.DownloadDetailUrlMessage;
 import com.realestate.crawler.extractor.message.NextStarterUrlMessage;
@@ -25,9 +25,9 @@ import java.util.Optional;
 @Slf4j
 public class ExtractStarterUrlCommandHandler implements ICommandHandler {
 
-    private final IStarterUrlRepository starterUrlRepository;
-    private final IDataSourceRepository dataSourceRepository;
-    private final IDetailUrlRepository detailUrlRepository;
+    private final StarterUrlCommandRepository starterUrlRepository;
+    private final DataSourceCommandRepository dataSourceRepository;
+    private final DetailUrlCommandRepository detailUrlRepository;
     private final ExtractStarterUrl01Service extractStarterUrl01Service;
     private IProducer producer;
 
@@ -38,9 +38,9 @@ public class ExtractStarterUrlCommandHandler implements ICommandHandler {
     private String getNextStarterUrlTopic;
 
     @Autowired
-    public ExtractStarterUrlCommandHandler(IStarterUrlRepository starterUrlRepository,
-                                           IDataSourceRepository dataSourceRepository,
-                                           IDetailUrlRepository detailUrlRepository,
+    public ExtractStarterUrlCommandHandler(StarterUrlCommandRepository starterUrlRepository,
+                                           DataSourceCommandRepository dataSourceRepository,
+                                           DetailUrlCommandRepository detailUrlRepository,
                                            ExtractStarterUrl01Service extractStarterUrl01Service,
                                            IProducer producer) {
         this.starterUrlRepository = starterUrlRepository;

@@ -2,7 +2,7 @@ package com.realestate.crawler.downloader.commandside.handler;
 
 import com.realestate.crawler.downloader.commandside.command.DownloadDetailUrlCommand;
 import com.realestate.crawler.downloader.commandside.command.ICommand;
-import com.realestate.crawler.downloader.commandside.repository.IDetailUrlRepository;
+import com.realestate.crawler.downloader.commandside.repository.DetailUrlCommandRepository;
 import com.realestate.crawler.downloader.commandside.service.DownloadService;
 import com.realestate.crawler.downloader.message.ExtractDetailUrlMessage;
 import com.realestate.crawler.downloader.producer.IProducer;
@@ -20,7 +20,7 @@ import java.util.Optional;
 @Slf4j
 public class DownloadTopicDetailUrlCommandHandler implements ICommandHandler {
 
-    private final IDetailUrlRepository detailUrlRepository;
+    private final DetailUrlCommandRepository detailUrlRepository;
     private final DownloadService downloadService;
     private final IProducer producer;
 
@@ -28,7 +28,7 @@ public class DownloadTopicDetailUrlCommandHandler implements ICommandHandler {
     private String extractDetailTopic;
 
     @Autowired
-    public DownloadTopicDetailUrlCommandHandler(IDetailUrlRepository detailUrlRepository,
+    public DownloadTopicDetailUrlCommandHandler(DetailUrlCommandRepository detailUrlRepository,
                                                 DownloadService downloadService, IProducer producer) {
         this.detailUrlRepository = detailUrlRepository;
         this.downloadService = downloadService;

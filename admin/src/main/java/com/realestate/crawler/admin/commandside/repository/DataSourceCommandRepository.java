@@ -5,7 +5,7 @@ import com.realestate.crawler.proto.Datasource;
 
 import java.util.Optional;
 
-public interface IDataSourceRepository {
+public interface DataSourceCommandRepository {
     boolean create(CreateDatasource createDatasource);
 
     Optional<Datasource> get(long id);
