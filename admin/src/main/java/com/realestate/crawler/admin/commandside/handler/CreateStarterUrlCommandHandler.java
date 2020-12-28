@@ -2,7 +2,7 @@ package com.realestate.crawler.admin.commandside.handler;
 
 import com.realestate.crawler.admin.commandside.command.CreateStarterUrlCommand;
 import com.realestate.crawler.admin.commandside.command.ICommand;
-import com.realestate.crawler.admin.commandside.repository.IStarterUrlRepository;
+import com.realestate.crawler.admin.commandside.repository.StarterUrlCommandRepository;
 import com.realestate.crawler.proto.CreateStaterUrl;
 import com.realestate.crawler.proto.Url;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +15,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CreateStarterUrlCommandHandler implements ICommandHandler {
 
-    private final IStarterUrlRepository starterUrlRepository;
+    private final StarterUrlCommandRepository starterUrlRepository;
 
     @Autowired
-    public CreateStarterUrlCommandHandler(IStarterUrlRepository starterUrlRepository) {
+    public CreateStarterUrlCommandHandler(StarterUrlCommandRepository starterUrlRepository) {
         this.starterUrlRepository = starterUrlRepository;
     }
 

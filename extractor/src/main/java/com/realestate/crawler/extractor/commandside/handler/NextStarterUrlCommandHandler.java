@@ -2,7 +2,7 @@ package com.realestate.crawler.extractor.commandside.handler;
 
 import com.realestate.crawler.extractor.commandside.command.GetNextStarterUrlCommand;
 import com.realestate.crawler.extractor.commandside.command.ICommand;
-import com.realestate.crawler.extractor.commandside.repository.IStarterUrlRepository;
+import com.realestate.crawler.extractor.commandside.repository.StarterUrlCommandRepository;
 import com.realestate.crawler.extractor.commandside.service.ExtractStarterUrl01Service;
 import com.realestate.crawler.extractor.message.DownloadStarterUrlMessage;
 import com.realestate.crawler.extractor.producer.IProducer;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class NextStarterUrlCommandHandler implements ICommandHandler {
 
-    private final IStarterUrlRepository starterUrlRepository;
+    private final StarterUrlCommandRepository starterUrlRepository;
     private final ExtractStarterUrl01Service extractStarterUrl01Service;
     private IProducer producer;
 
@@ -26,7 +26,7 @@ public class NextStarterUrlCommandHandler implements ICommandHandler {
     private String downloadStarterTopic;
 
     @Autowired
-    public NextStarterUrlCommandHandler(IStarterUrlRepository starterUrlRepository,
+    public NextStarterUrlCommandHandler(StarterUrlCommandRepository starterUrlRepository,
                                         ExtractStarterUrl01Service extractStarterUrl01Service,
                                         IProducer producer) {
         this.starterUrlRepository = starterUrlRepository;

@@ -5,7 +5,7 @@ import com.realestate.crawler.proto.UpdateHtmlContentStarterUrl;
 
 import java.util.Optional;
 
-public interface IStarterUrlRepository {
+public interface StarterUrlCommandRepository {
 
     boolean updateHtmlContent(UpdateHtmlContentStarterUrl updateHtmlContentStarterUrl);
 

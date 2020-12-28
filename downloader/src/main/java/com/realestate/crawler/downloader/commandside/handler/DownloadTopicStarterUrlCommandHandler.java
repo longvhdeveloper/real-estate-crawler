@@ -2,8 +2,8 @@ package com.realestate.crawler.downloader.commandside.handler;
 
 import com.realestate.crawler.downloader.commandside.command.DownloadStarterUrlCommand;
 import com.realestate.crawler.downloader.commandside.command.ICommand;
-import com.realestate.crawler.downloader.commandside.repository.IDataSourceRepository;
-import com.realestate.crawler.downloader.commandside.repository.IStarterUrlRepository;
+import com.realestate.crawler.downloader.commandside.repository.DataSourceCommandRepository;
+import com.realestate.crawler.downloader.commandside.repository.StarterUrlCommandRepository;
 import com.realestate.crawler.downloader.commandside.service.DownloadService;
 import com.realestate.crawler.downloader.message.ExtractStarterUrlMessage;
 import com.realestate.crawler.downloader.producer.IProducer;
@@ -22,8 +22,8 @@ import java.util.Optional;
 @Slf4j
 public class DownloadTopicStarterUrlCommandHandler implements ICommandHandler {
 
-    private final IDataSourceRepository dataSourceRepository;
-    private final IStarterUrlRepository starterUrlRepository;
+    private final DataSourceCommandRepository dataSourceRepository;
+    private final StarterUrlCommandRepository starterUrlRepository;
 
     private final DownloadService downloadService;
 
@@ -33,8 +33,8 @@ public class DownloadTopicStarterUrlCommandHandler implements ICommandHandler {
     private String extractStarterTopic;
 
     @Autowired
-    public DownloadTopicStarterUrlCommandHandler(IDataSourceRepository dataSourceRepository,
-                                                 IStarterUrlRepository starterUrlRepository,
+    public DownloadTopicStarterUrlCommandHandler(DataSourceCommandRepository dataSourceRepository,
+                                                 StarterUrlCommandRepository starterUrlRepository,
                                                  DownloadService downloadService,
                                                  IProducer producer) {
         this.dataSourceRepository = dataSourceRepository;

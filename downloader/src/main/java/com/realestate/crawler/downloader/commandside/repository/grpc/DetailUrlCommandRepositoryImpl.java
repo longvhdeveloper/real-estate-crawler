@@ -2,7 +2,7 @@ package com.realestate.crawler.downloader.commandside.repository.grpc;
 
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
-import com.realestate.crawler.downloader.commandside.repository.IDetailUrlRepository;
+import com.realestate.crawler.downloader.commandside.repository.DetailUrlCommandRepository;
 import com.realestate.crawler.proto.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -12,12 +12,12 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public class DetailUrlRepositoryImpl implements IDetailUrlRepository {
+public class DetailUrlCommandRepositoryImpl implements DetailUrlCommandRepository {
 
     private final EurekaClient client;
 
     @Autowired
-    public DetailUrlRepositoryImpl(EurekaClient client) {
+    public DetailUrlCommandRepositoryImpl(EurekaClient client) {
         this.client = client;
     }
 

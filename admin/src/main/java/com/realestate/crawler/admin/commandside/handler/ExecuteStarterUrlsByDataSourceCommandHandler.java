@@ -2,8 +2,8 @@ package com.realestate.crawler.admin.commandside.handler;
 
 import com.realestate.crawler.admin.commandside.command.ExecuteStarterUrlsByDataSourceCommand;
 import com.realestate.crawler.admin.commandside.command.ICommand;
-import com.realestate.crawler.admin.commandside.repository.IDataSourceRepository;
-import com.realestate.crawler.admin.commandside.repository.IStarterUrlRepository;
+import com.realestate.crawler.admin.commandside.repository.DataSourceCommandRepository;
+import com.realestate.crawler.admin.commandside.repository.StarterUrlCommandRepository;
 import com.realestate.crawler.admin.message.DownloadStarterUrlMessage;
 import com.realestate.crawler.admin.producer.IProducer;
 import com.realestate.crawler.proto.Datasource;
@@ -20,8 +20,8 @@ import java.util.Optional;
 @Component
 @Slf4j
 public class ExecuteStarterUrlsByDataSourceCommandHandler implements ICommandHandler {
-    private final IDataSourceRepository dataSourceRepository;
-    private final IStarterUrlRepository starterUrlRepository;
+    private final DataSourceCommandRepository dataSourceRepository;
+    private final StarterUrlCommandRepository starterUrlRepository;
 
     private final IProducer producer;
 
@@ -29,8 +29,8 @@ public class ExecuteStarterUrlsByDataSourceCommandHandler implements ICommandHan
     private String downloadStarterTopic;
 
     @Autowired
-    public ExecuteStarterUrlsByDataSourceCommandHandler(IDataSourceRepository dataSourceRepository,
-                                                        IStarterUrlRepository starterUrlRepository, IProducer producer) {
+    public ExecuteStarterUrlsByDataSourceCommandHandler(DataSourceCommandRepository dataSourceRepository,
+                                                        StarterUrlCommandRepository starterUrlRepository, IProducer producer) {
         this.dataSourceRepository = dataSourceRepository;
         this.starterUrlRepository = starterUrlRepository;
         this.producer = producer;

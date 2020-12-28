@@ -5,7 +5,7 @@ import com.realestate.crawler.proto.Starterurl;
 
 import java.util.Optional;
 
-public interface IStarterUrlRepository {
+public interface StarterUrlCommandRepository {
 
     boolean create(CreateStaterUrl createStaterUrl);
 
