@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.22.0 (955b78124)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: starter-url-service
+  name: starter-url-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: starter-url-service
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.22.0 (955b78124)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/backend: "true"
+        io.kompose.service: starter-url-service
+    spec:
+      containers:
+        - env:
+            - name: EUREKA_CLIENT_INSTANCE_NONSECUREPORT
+              value: "6566"
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://eureka-service:8761/eureka
+            - name: GRPC_PORT
+              value: "6566"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: 1q2w3e4r
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://mysql:3306/real_estate_crawler?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+            - name: SPRING_DATASOURCE_USERNAME
+              value: db_wr
+          image: starter-url-service
+          name: starter-url-service
+          ports:
+            - containerPort: 6566
+          resources: {}
+      restartPolicy: Always
+status: {}

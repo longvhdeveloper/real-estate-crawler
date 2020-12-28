@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.22.0 (955b78124)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: extractor-service
+  name: extractor-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: extractor-service
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.22.0 (955b78124)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/backend: "true"
+        io.kompose.service: extractor-service
+    spec:
+      containers:
+        - env:
+            - name: EUREKA_CLIENT_INSTANCE_NONSECUREPORT
+              value: "6566"
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://eureka-service:8761/eureka
+            - name: SERVER_PORT
+              value: "8084"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: 1q2w3e4r
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://mysql:3306/real_estate_crawler?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+            - name: SPRING_DATASOURCE_USERNAME
+              value: db_wr
+            - name: SPRING_KAFKA_CONSUMER_BOOTSTRAP-SERVERS
+              value: kafka:9092
+            - name: SPRING_KAFKA_PRODUCER_BOOTSTRAP-SERVERS
+              value: kafka:9092
+          image: extractor-service
+          name: extractor-service
+          ports:
+            - containerPort: 8086
+          resources: {}
+      restartPolicy: Always
+status: {}
