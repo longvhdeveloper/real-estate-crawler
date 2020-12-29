@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Component
@@ -44,7 +45,7 @@ public class DownloadTopicStarterUrlCommandHandler implements ICommandHandler {
     }
 
     @Override
-    public boolean handle(ICommand command) {
+    public boolean handle(ICommand command) throws IOException {
         DownloadStarterUrlCommand downloadStarterUrlCommand = (DownloadStarterUrlCommand) command;
 
         Datasource datasource = dataSourceRepository.get(downloadStarterUrlCommand.getDataSourceId()).orElseThrow(

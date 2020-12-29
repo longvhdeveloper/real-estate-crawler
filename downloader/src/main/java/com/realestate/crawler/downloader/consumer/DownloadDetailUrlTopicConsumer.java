@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -28,6 +29,12 @@ public class DownloadDetailUrlTopicConsumer {
 
         log.info("Received download detail url message: {}", message);
 
-        CompletableFuture.runAsync(() -> handler.handle(DownloadDetailUrlCommand.builder().url(message.getUrl()).build())).get();
+        CompletableFuture.runAsync(() -> {
+            try {
+                handler.handle(DownloadDetailUrlCommand.builder().url(message.getUrl()).build());
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        }).get();
     }
 }

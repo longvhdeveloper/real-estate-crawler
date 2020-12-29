@@ -20,6 +20,8 @@ spring:
       downloadDetail: download-detail
       extractStarter: extract-starter
       extractDetail: extract-detail
+      downloadStarterDLT: download-starter.DLT
+      downloadDetailDLT: download-detail.DLT
 
 logging:
   level:

@@ -54,7 +54,7 @@ public class NextStarterUrlCommandHandler implements ICommandHandler {
         // TODO to keep test small data
         int limit = 5;
         if (currentPageNumber > 0 && currentPageNumber < limit) {
-            String nextStarterUrl = starterUrl.getUrl().replace("/p" + currentPageNumber, "");
+            String nextStarterUrl = starterUrl.getUrl().replaceAll("/p" + currentPageNumber, "");
             int nextPageNumber = currentPageNumber + 1;
             nextStarterUrl = nextStarterUrl + "/p" + nextPageNumber;
             log.info("==== NEXT URL {}", nextStarterUrl);

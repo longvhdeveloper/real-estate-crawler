@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Component
@@ -36,7 +37,7 @@ public class DownloadTopicDetailUrlCommandHandler implements ICommandHandler {
     }
 
     @Override
-    public boolean handle(ICommand command) {
+    public boolean handle(ICommand command) throws IOException {
         DownloadDetailUrlCommand downloadDetailUrlCommand = (DownloadDetailUrlCommand) command;
 
         Optional<Detailurl> optional = detailUrlRepository.findByUrl(downloadDetailUrlCommand.getUrl());

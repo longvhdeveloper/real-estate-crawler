@@ -1,7 +1,9 @@
 package com.realestate.crawler.downloader.configuration;
 
+import com.realestate.crawler.downloader.message.AbstractMessage;
 import com.realestate.crawler.downloader.message.DownloadDetailUrlMessage;
 import com.realestate.crawler.downloader.message.DownloadStarterUrlMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,16 +12,27 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
+import org.springframework.kafka.listener.SeekToCurrentErrorHandler;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.policy.SimpleRetryPolicy;
+import org.springframework.retry.support.RetryTemplate;
+import org.springframework.util.backoff.FixedBackOff;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
+@Slf4j
 public class KafkaConsumerConfig {
 
     @Value(value = "${spring.kafka.consumer.bootstrap-servers}")
     private String bootstrapAddress;
+
+    @Value(value = "${spring.kafka.topic.downloadStarterDLT}")
+    private String downloadStarterDLT;
 
     public ConsumerFactory<String, DownloadStarterUrlMessage> downloadStarterUrlConsumerFactory() {
 
@@ -40,10 +53,24 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, DownloadStarterUrlMessage> downloadStarterUrlKafkaListenerContainerFactory() {
+    public ConcurrentKafkaListenerContainerFactory<String, DownloadStarterUrlMessage> downloadStarterUrlKafkaListenerContainerFactory(
+            KafkaTemplate<String, AbstractMessage> kafkaTemplate
+    ) {
         ConcurrentKafkaListenerContainerFactory<String, DownloadStarterUrlMessage> factory
                 = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(downloadStarterUrlConsumerFactory());
+
+//        factory.setRetryTemplate(kafkaRetry());
+//        factory.setRecoveryCallback(retryContext -> {
+//            ConsumerRecord consumerRecord = (ConsumerRecord) retryContext.getAttribute("record");
+//            log.info("Recovery is called for message {} ", consumerRecord.value());
+//            kafkaTemplate.send(downloadStarterDLT, (DownloadStarterUrlMessage) consumerRecord.value());
+//            return Optional.empty();
+//        });
+
+        factory.setErrorHandler(new SeekToCurrentErrorHandler(new DeadLetterPublishingRecoverer(kafkaTemplate),
+                new FixedBackOff(5 * 1000L, 1)));
+
         return factory;
     }
 
@@ -71,5 +98,16 @@ public class KafkaConsumerConfig {
                 = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(downloadDetailUrlConsumerFactory());
         return factory;
+    }
+
+    public RetryTemplate kafkaRetry() {
+        RetryTemplate retryTemplate = new RetryTemplate();
+        FixedBackOffPolicy fixedBackOffPolicy = new FixedBackOffPolicy();
+        fixedBackOffPolicy.setBackOffPeriod(10 * 1000l);
+        retryTemplate.setBackOffPolicy(fixedBackOffPolicy);
+        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
+        retryPolicy.setMaxAttempts(3);
+        retryTemplate.setRetryPolicy(retryPolicy);
+        return retryTemplate;
     }
 }
